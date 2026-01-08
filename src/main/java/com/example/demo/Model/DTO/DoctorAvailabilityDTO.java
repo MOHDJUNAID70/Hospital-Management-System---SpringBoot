@@ -1,10 +1,10 @@
 package com.example.demo.Model.DTO;
 
+import com.example.demo.Enum.WorkingDay;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Data
@@ -13,7 +13,7 @@ import java.time.LocalTime;
 public class DoctorAvailabilityDTO {
     private Integer id;
     private DoctorDTO doctorInfo;
-    private DayOfWeek dayOfWeek;
+    private WorkingDay workingDay;
     private LocalTime startTime;
     private LocalTime endTime;
 }

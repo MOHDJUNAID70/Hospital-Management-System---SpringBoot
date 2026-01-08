@@ -1,13 +1,12 @@
 package com.example.demo.Model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.demo.Enum.WorkingDay;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
@@ -23,7 +22,7 @@ public class DoctorAvailability {
     private Doctor doctor;
     @NotNull
     @Enumerated(EnumType.STRING)
-    private DayOfWeek dayOfWeek;
+    private WorkingDay workingDay;
     @NotNull
     private LocalTime startTime;
     @NotNull

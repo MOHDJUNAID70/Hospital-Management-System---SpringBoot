@@ -1,8 +1,7 @@
 package com.example.demo.Controller;
 
-import com.example.demo.Enum.AppointmentStatus;
+import com.example.demo.Enum.DoctorSpecializations;
 import com.example.demo.Mapper.DoctorAvailabilityMapper;
-import com.example.demo.Model.Appointment;
 import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
 import com.example.demo.Model.DTO.DoctorDTO;
 import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
@@ -11,21 +10,20 @@ import com.example.demo.Model.DoctorAvailability;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
+import com.example.demo.Service.DoctorAvailabilityService;
 import com.example.demo.Service.DoctorService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -41,11 +39,11 @@ public class DoctorController {
     @Autowired
     private DoctorAvailabilityMapper doctorAvailabilityMapper;
     @Autowired
-    private AppointmentRepo appointmentRepo;
+    private DoctorAvailabilityService  doctorAvailabilityService;
 
-    @GetMapping("/doctor/info")
-    public List<DoctorDTO> GetAllDoctors() {
-        return doctorService.getDoctorinfo();
+    @GetMapping("doctor/info")
+    public List<Doctor> DoctorsDetails() {
+        return doctorRepo.findAll();
     }
 
     @GetMapping("csrf")
@@ -73,6 +71,11 @@ public class DoctorController {
         return doctorService.getByexperienceInYears(experience);
     }
 
+    @GetMapping("doctor/specialization/{specialization}")
+    public List<Doctor> getBySpecialization(@Valid @PathVariable DoctorSpecializations specialization) {
+        return doctorService.getBySpecialization(specialization);
+    }
+
     @DeleteMapping("doctor/delete/id/{id}")
     public ResponseEntity<String> deleteDoctor(@PathVariable int id) {
         doctorService.deleteById(id);
@@ -88,14 +91,14 @@ public class DoctorController {
 //  set the doctors availability timetable
     @PostMapping("doctor/set_availability")
     public ResponseEntity<String> setAvailability(@Valid @RequestBody DoctorAvailability availability) {
-        doctorService.setAvailability(availability);
+        doctorAvailabilityService.setAvailability(availability);
         return new ResponseEntity<>("Doctor's Availability set", HttpStatus.OK);
     }
 
 //    update the doctor's availability
     @PostMapping("doctor/update_availability")
     public ResponseEntity<String> updateDoctorAvailability(@RequestBody @Valid UpdateAvailabilityDTO request) {
-        doctorService.updateDoctorAvailability(request);
+        doctorAvailabilityService.updateDoctorAvailability(request);
         return new ResponseEntity<>("Doctor's Availability updated and " +
                 "the appointments have been cancelled which are after the "+request.getEndTime()+" a.m/p.m !!!", HttpStatus.OK);
     }

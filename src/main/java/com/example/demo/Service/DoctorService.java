@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.Enum.AppointmentStatus;
+import com.example.demo.Enum.DoctorSpecializations;
 import com.example.demo.Model.Appointment;
 import com.example.demo.Model.DTO.DoctorDTO;
 import com.example.demo.Mapper.DoctorMapper;
@@ -10,18 +11,18 @@ import com.example.demo.Model.DoctorAvailability;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
+import com.example.demo.Specification.DoctorSpecification;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DoctorService {
@@ -36,10 +37,6 @@ public class DoctorService {
 
     @Autowired
     AppointmentRepo appointmentRepo;
-
-    public List<DoctorDTO> getDoctorinfo() {
-        return doctorRepo.findAll().stream().map(doctorMapper::ToDTO).toList();
-    }
 
     public void addDoctor(Doctor doctor) {
         doctorRepo.save(doctor);
@@ -61,38 +58,13 @@ public class DoctorService {
         doctorRepo.deleteByExperienceInYears(experience);
     }
 
-    public void setAvailability(@Valid DoctorAvailability availability) {
-        Doctor doctor = doctorRepo.findById(availability.getDoctor().getId()).orElseThrow(()-> new RuntimeException("doctor not found"));
-        availability.setDoctor(doctor);
-        availability.setDayOfWeek(availability.getDayOfWeek());
-        availability.setStartTime(availability.getStartTime());
-        availability.setEndTime(availability.getEndTime());
-        doctorAvailabilityRepo.save(availability);
+    public List<Doctor> getBySpecialization(DoctorSpecializations specialization) {
+        return doctorRepo.findBySpecialization(specialization);
     }
 
-    public void updateDoctorAvailability(@Valid UpdateAvailabilityDTO request) {
-        DoctorAvailability availability=doctorAvailabilityRepo.findById(request.getId())
-                .orElseThrow(()-> new RuntimeException("doctor availability not found"));
-        availability.setStartTime(request.getStartTime());
-        availability.setEndTime(request.getEndTime());
-        doctorAvailabilityRepo.save(availability);
-        CancelAffectedAppointments(
-                availability.getDoctor(),
-                availability.getDayOfWeek(),
-                request.getEndTime()
-        );
-    }
-    private void CancelAffectedAppointments(Doctor doctor, @NotNull DayOfWeek dayOfWeek, @NotNull LocalTime endTime) {
-        LocalDate localDate = LocalDate.now();
-        if(!localDate.getDayOfWeek().equals(dayOfWeek)) {
-            throw new RuntimeException("invalid day of week");
-        }
-        List<Appointment> appointments=appointmentRepo.findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeAfter(
-                doctor,localDate, AppointmentStatus.Booked, endTime
-        ).orElseThrow(()-> new RuntimeException("appointment not found"));
-        for(Appointment appointment : appointments) {
-            appointment.setStatus(AppointmentStatus.Cancelled);
-        }
-        appointmentRepo.saveAll(appointments);
+    public Page<DoctorDTO> fetchAll(Pageable pageable, Integer experienceInYears, String name,
+                                    DoctorSpecializations specializations) {
+        Specification<Doctor> spec= DoctorSpecification.getSpecification(experienceInYears, name, specializations);
+        return doctorRepo.findAll(spec, pageable).map(doctorMapper::ToDTO);
     }
 }

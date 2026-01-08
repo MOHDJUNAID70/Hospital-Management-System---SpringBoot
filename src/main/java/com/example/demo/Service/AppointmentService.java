@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import com.example.demo.Enum.AppointmentStatus;
+import com.example.demo.Enum.WorkingDay;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Mapper.AppointMapper;
 import com.example.demo.Model.Appointment;
@@ -11,10 +12,14 @@ import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
 import com.example.demo.Repository.PatientRepo;
+import com.example.demo.Specification.AppointmentSpecification;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -61,9 +66,10 @@ public class AppointmentService {
 
         Appointment app=new Appointment();
 
-        DayOfWeek dayOfWeek=appointment.getAppointmentDate().getDayOfWeek();
+        java.time.DayOfWeek day =appointment.getAppointmentDate().getDayOfWeek();
+        WorkingDay workingDay=WorkingDay.valueOf(day.name());
 
-        DoctorAvailability availability=doctorAvailabilityRepo.findByDoctorAndDayOfWeek(doctor,dayOfWeek)
+        DoctorAvailability availability=doctorAvailabilityRepo.findByDoctorAndWorkingDay(doctor,workingDay)
                 .orElseThrow(()->new RuntimeException("Doctor is not available on this Date"));
 
         LocalTime appointmentTime=appointment.getAppointmentTime();
@@ -143,5 +149,12 @@ public class AppointmentService {
 //    delete the appointment by appointment_id
     public void deleteAppointmentById(Integer id) {
         appointmentRepo.deleteById(Long.valueOf(id));
+    }
+
+//    Specification for filtering
+    public Page<AppointmentDTO> fetchAll(Pageable pageable, LocalDate appointmentDate,
+                         AppointmentStatus status, LocalTime appointmentStartTime, LocalTime appointmentEndTime) {
+        Specification<Appointment> spec= AppointmentSpecification.getSpecification(appointmentDate, status, appointmentStartTime, appointmentEndTime);
+        return appointmentRepo.findAll(spec, pageable).map(appointMapper::ToDTO);
     }
 }
