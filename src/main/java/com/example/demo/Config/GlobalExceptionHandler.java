@@ -28,5 +28,6 @@ public class GlobalExceptionHandler {
         Map<String,String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach(error -> errors.put(error.getObjectName(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
-    } 
+    }
+
 }
