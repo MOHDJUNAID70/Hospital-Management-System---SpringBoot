@@ -3,6 +3,7 @@ package com.example.demo.Controller;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Model.Appointment;
 import com.example.demo.Service.AppointmentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("hospital")
+@Tag(name = "Appointment APIs")
 public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;

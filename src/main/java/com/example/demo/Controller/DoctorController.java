@@ -12,6 +12,7 @@ import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
 import com.example.demo.Service.DoctorAvailabilityService;
 import com.example.demo.Service.DoctorService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("hospital")
+@Tag(name = "Doctor APIs")
 public class DoctorController {
 
     @Autowired

@@ -3,6 +3,7 @@ package com.example.demo.Pagination;
 import com.example.demo.Enum.Role;
 import com.example.demo.Model.DTO.UserInfoDTO;
 import com.example.demo.Service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("user")
+@Tag(name="User Pagination APIs")
 public class UserPage {
     @Autowired
     private UserService userService;
@@ -29,7 +31,7 @@ public class UserPage {
             Role role
             )
     {
-        Sort sort=null;
+        Sort sort;
         if(sortDirection.equalsIgnoreCase("asc")){
             sort=Sort.by(sortBy).ascending();
         }

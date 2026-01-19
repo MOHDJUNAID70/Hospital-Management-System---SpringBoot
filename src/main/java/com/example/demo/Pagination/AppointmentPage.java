@@ -5,6 +5,7 @@ import com.example.demo.Mapper.AppointMapper;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Service.AppointmentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import java.time.LocalTime;
 
 @RestController
 @RequestMapping("hospital")
+@Tag(name="Appointment's Pagination APIs")
 public class AppointmentPage {
     @Autowired
     AppointmentRepo appointmentRepo;

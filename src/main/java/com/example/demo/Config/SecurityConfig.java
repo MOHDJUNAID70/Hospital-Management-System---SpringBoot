@@ -33,9 +33,9 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(request -> request
-            .requestMatchers("/user/reg", "/user/login", "/app", "/allAppointments").permitAll().anyRequest().authenticated())
+            .requestMatchers("/user/reg", "/user/login").permitAll().anyRequest().authenticated())
             .oauth2Login(oauth -> oauth
-                    .defaultSuccessUrl("/home", true))
+                    .defaultSuccessUrl("/swagger-ui/index.html", true))
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))

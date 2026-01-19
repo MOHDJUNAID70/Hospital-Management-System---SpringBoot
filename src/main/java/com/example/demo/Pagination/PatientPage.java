@@ -4,6 +4,7 @@ import com.example.demo.Mapper.PatientMapper;
 import com.example.demo.Model.DTO.PatientDTO;
 import com.example.demo.Repository.PatientRepo;
 import com.example.demo.Service.PatientService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("hospital")
+@Tag(name = "Patient Pagination APIs")
 public class PatientPage {
     @Autowired
     PatientRepo patientRepo;

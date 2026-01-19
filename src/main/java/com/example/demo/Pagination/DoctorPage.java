@@ -3,6 +3,10 @@ package com.example.demo.Pagination;
 import com.example.demo.Enum.DoctorSpecializations;
 import com.example.demo.Model.DTO.DoctorDTO;
 import com.example.demo.Service.DoctorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,10 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("hospital")
+@Tag(name = "Doctor Pagination APIs")
 public class DoctorPage {
     @Autowired
     DoctorService doctorService;
 
+    @Operation(summary = "Get all doctors", description = "Fetch all doctors with pagination and Filter")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Doctors fetched successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
     @GetMapping("doctor/details")
     public Page<DoctorDTO> GetAllDoctors(@RequestParam(required = false, defaultValue = "1") int pageNo,
                                       @RequestParam(required = false, defaultValue = "4") int pageSize,

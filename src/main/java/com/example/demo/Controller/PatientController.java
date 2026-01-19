@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Model.Patient;
 import com.example.demo.Service.PatientService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("hospital")
+@Tag(name = "Patient APIs")
 public class PatientController {
 
     @Autowired

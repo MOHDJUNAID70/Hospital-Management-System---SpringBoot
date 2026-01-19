@@ -29,7 +29,7 @@ public class DoctorSpecification {
                 if(specializations != null) {
                     predicates.add(criteriaBuilder.equal(root.get("specialization"), specializations));
                 }
-                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             }
         };
     }
