@@ -15,6 +15,7 @@ import com.example.demo.Repository.PatientRepo;
 import com.example.demo.Specification.AppointmentSpecification;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,37 +74,7 @@ public class AppointmentService {
                 .orElseThrow(()->new RuntimeException("Doctor is not available on this Date"));
 
         LocalTime appointmentTime=appointment.getAppointmentTime();
-        LocalTime end=appointmentTime.plusMinutes(30);
-        LocalTime lunchStartTime=availability.getStartTime().plusHours(4);
-        LocalTime lunchEndTime=availability.getStartTime().plusHours(5);
-
-//        check weather the selected time slot is in between lunchtime or not.
-        if(appointmentTime.isAfter(lunchStartTime) && appointmentTime.isBefore(lunchEndTime)){
-            throw new RuntimeException("It's lunch Time from 1pm to 2pm, choose another slot");
-        }
-
-//       check weather the selected slot is comes under the unch time slot or not.
-        if(end.isAfter(lunchStartTime) && end.isBefore(lunchEndTime)){
-            throw new RuntimeException("Doctor would not be available between 1pm and 2pm");
-        }
-
-//       check weather the selected slot is comes under the doctor's availability time or not.
-        if(appointmentTime.isBefore(availability.getStartTime()) ||  end.isAfter(availability.getEndTime())){
-            throw new RuntimeException("Doctor is not available at this time");
-        }
-
-//        check the selected slot is overlapping with other slot or not.
-        boolean overlap = appointmentRepo
-                        .existsByDoctorAndAppointmentDateAndAppointmentTimeLessThanAndAppointmentEndTimeGreaterThan(
-                                doctor,
-                                appointment.getAppointmentDate(),
-                                end,
-                                appointmentTime
-                        );
-
-        if(overlap){
-            throw new RuntimeException("This slot is overlapping with others slot!!!");
-        }
+        LocalTime endtime=appointmentTime.plusMinutes(30);
 
 //        check weather the patient's appointment is already booked with the same doctor on same day.
         boolean alreadyBooked =
@@ -122,7 +93,7 @@ public class AppointmentService {
         boolean alreadyBookedAtThisTime=appointmentRepo.existsByPatientAndAppointmentDateAndAppointmentTimeLessThanAndAppointmentEndTimeGreaterThan(
                 patient,
                 appointment.getAppointmentDate(),
-                end,
+                endtime,
                 appointmentTime
         );
 
@@ -131,6 +102,21 @@ public class AppointmentService {
                     +appointment.getAppointmentDate()
             );
         }
+
+        //        check the selected slot is overlapping with other slot or not.
+        boolean overlap = appointmentRepo
+                .existsByDoctorAndAppointmentDateAndAppointmentTimeLessThanAndAppointmentEndTimeGreaterThan(
+                        doctor,
+                        appointment.getAppointmentDate(),
+                        endtime,
+                        appointmentTime
+                );
+
+        if(overlap){
+            throw new RuntimeException("This slot is overlapping with others slot!!!");
+        }
+
+        LocalTime end = getLocalTime(appointmentTime, availability);
 
         app.setAppointmentTime(appointmentTime);
         app.setAppointmentEndTime(end);
@@ -141,8 +127,36 @@ public class AppointmentService {
         appointmentRepo.save(app);
     }
 
-//    delete the appointments details by Date
+    private static @NonNull LocalTime getLocalTime(LocalTime appointmentTime, DoctorAvailability availability) {
+        LocalTime end= appointmentTime.plusMinutes(30);
+        LocalTime lunchStartTime= availability.getStartTime().plusHours(4);
+        LocalTime lunchEndTime= availability.getStartTime().plusHours(5);
+
+        if(end.isBefore(appointmentTime)){
+            throw new RuntimeException("appointment cannot extend into next day!!!");
+        }
+
+//        check weather the selected time slot is in between lunchtime or not.
+        if(appointmentTime.isAfter(lunchStartTime) && appointmentTime.isBefore(lunchEndTime)){
+            throw new RuntimeException("It's lunch Time from 1pm to 2pm, choose another slot");
+        }
+
+//       check weather the selected slot is comes under the lunchtime slot or not.
+        if(end.isAfter(lunchStartTime) && end.isBefore(lunchEndTime)){
+            throw new RuntimeException("Doctor would not be available between 1pm and 2pm");
+        }
+
+//       check weather the selected slot is comes under the doctor's availability time or not.
+        if(appointmentTime.isBefore(availability.getStartTime()) ||  end.isAfter(availability.getEndTime())){
+            throw new RuntimeException("Doctor is not available at this time, choose the time between "+availability.getStartTime()+" to "+availability.getEndTime());
+        }
+        return end;
+    }
+
+    //    delete the appointments details by Date
     public void deleteAppointmentByDate(LocalDate date) {
+        Appointment appointment=new Appointment();
+
         appointmentRepo.deleteAppointmentByAppointmentDate(date);
     }
 

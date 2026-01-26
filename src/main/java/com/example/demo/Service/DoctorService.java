@@ -67,4 +67,13 @@ public class DoctorService {
         Specification<Doctor> spec= DoctorSpecification.getSpecification(experienceInYears, name, specializations);
         return doctorRepo.findAll(spec, pageable).map(doctorMapper::ToDTO);
     }
+
+    public void updateDoctorInfo(@Valid Doctor doctor) {
+        Doctor doc=doctorRepo.findById(doctor.getId()).orElseThrow(()-> new RuntimeException("Doctor Not Found"));
+        doc.setName(doctor.getName());
+        doc.setGender(doctor.getGender());
+        doc.setExperienceInYears(doctor.getExperienceInYears());
+        doc.setSpecialization(doctor.getSpecialization());
+        doctorRepo.save(doc);
+    }
 }

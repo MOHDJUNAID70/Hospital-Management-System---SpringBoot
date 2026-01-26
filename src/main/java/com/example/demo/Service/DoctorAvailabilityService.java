@@ -58,12 +58,15 @@ public class DoctorAvailabilityService {
     }
     private void CancelAffectedAppointments(Doctor doctor, @NotNull WorkingDay workingDay, @NotNull LocalTime endTime) {
         LocalDate localDate = LocalDate.now();
-        if(!localDate.getDayOfWeek().equals(workingDay)) {
+        if(!localDate.getDayOfWeek().name().equals(workingDay.name())) {
             throw new RuntimeException("invalid day of week");
         }
         List<Appointment> appointments=appointmentRepo.findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeAfter(
                 doctor,localDate, AppointmentStatus.Booked, endTime
         ).orElseThrow(()-> new RuntimeException("appointment not found"));
+        if(appointments.isEmpty()) {
+            throw new RuntimeException("No appointment found on this date " + localDate);
+        };
         for(Appointment appointment : appointments) {
             appointment.setStatus(AppointmentStatus.Cancelled);
         }

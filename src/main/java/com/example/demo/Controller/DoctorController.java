@@ -12,6 +12,7 @@ import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
 import com.example.demo.Service.DoctorAvailabilityService;
 import com.example.demo.Service.DoctorService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -106,13 +107,26 @@ public class DoctorController {
     }
 
     // get the doctor's timetable by their id
-    @GetMapping("doctor/availability/{id}")
+    @Operation(summary = "Get Doctor's Timetable", description = "Doctor's Timetable by their ID")
+    @GetMapping("/doctor/availability/{id}")
     public List<DoctorAvailabilityDTO> GetAvailabilityById(@PathVariable int id) {
         return doctorAvailabilityRepo.findByDoctorId(id).stream().map(doctorAvailabilityMapper::ToDTO).toList();
     }
 
+    @DeleteMapping("/doctor/delete_availability_by_id")
+    public ResponseEntity<String> deleteAvailabilityById(@RequestParam int id) {
+        doctorAvailabilityRepo.deleteById(id);
+        return new ResponseEntity<>("Doctor's Availability deleted", HttpStatus.OK);
+    }
     @GetMapping("doctor/availability")
     public List<DoctorAvailability> getAvailabilityById() {
         return doctorAvailabilityRepo.findAll();
+    }
+
+    @Operation(summary = "Update doctor's Profile", description = "update doctor's Info")
+    @PutMapping("doctor/update_profile")
+    public ResponseEntity<String> updateDoctorInfo(@Valid @RequestBody Doctor doctor){
+        doctorService.updateDoctorInfo(doctor);
+        return new ResponseEntity<>("Doctor Info Updated", HttpStatus.OK);
     }
 }
