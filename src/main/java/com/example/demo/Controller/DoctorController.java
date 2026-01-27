@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Enum.DoctorSpecializations;
+import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.DoctorAvailabilityMapper;
 import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
 import com.example.demo.Model.DTO.DoctorDTO;

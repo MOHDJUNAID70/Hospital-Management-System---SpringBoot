@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Enum.WorkingDay;
+import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.DoctorAvailabilityMapper;
 import com.example.demo.Model.Appointment;
 import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
@@ -65,7 +66,7 @@ public class DoctorAvailabilityService {
                 doctor,localDate, AppointmentStatus.Booked, endTime
         ).orElseThrow(()-> new RuntimeException("appointment not found"));
         if(appointments.isEmpty()) {
-            throw new RuntimeException("No appointment found on this date " + localDate);
+            throw new CustomException("No such appointment exists with this criteria");
         };
         for(Appointment appointment : appointments) {
             appointment.setStatus(AppointmentStatus.Cancelled);
@@ -76,6 +77,10 @@ public class DoctorAvailabilityService {
 //    Specification
     public Page<DoctorAvailabilityDTO> fetchAll(Pageable pageable, WorkingDay workingDay, LocalTime startTime, LocalTime endTime) {
         Specification<DoctorAvailability> specification= DoctorAvailabilitySpecification.getSpecification(workingDay,startTime,endTime);
+        List<DoctorAvailability> availability=doctorAvailabilityRepo.findAll(specification);
+        if(availability.isEmpty()){
+            throw new CustomException("No Availability exists with this criteria");
+        }
         return doctorAvailabilityRepo.findAll(specification, pageable).map(doctorAvailabilityMapper::ToDTO);
     }
 }

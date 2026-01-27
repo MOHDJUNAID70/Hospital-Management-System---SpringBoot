@@ -34,7 +34,7 @@ public class PatientController {
 
 //    get patient info by ID
     @GetMapping("patient/id")
-    public Patient getPatientById(@RequestParam int id) {
+    public Patient getPatientById(@RequestParam("id") int id) {
         return patientService.getPatientById(id);
     }
 
@@ -45,7 +45,7 @@ public class PatientController {
     }
 
 //    Get Patient details by age and name
-    @GetMapping("patient/search")
+    @GetMapping("patient/searchByageAndName")
     public Patient findPatientByageandname(@RequestParam int age, @RequestParam String name) {
         return patientService.findPatientByageAndName(age, name);
     }

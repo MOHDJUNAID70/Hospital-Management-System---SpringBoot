@@ -13,15 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorSpecification {
-    public static Specification<Doctor> getSpecification(Integer experienceInYears, String name,
+    public static Specification<Doctor> getSpecification(Integer StartExperienceInYears, Integer endExperienceInYears, String name,
                                                          DoctorSpecializations specializations) {
         return new Specification<Doctor>() {
 
             @Override
             public @Nullable Predicate toPredicate(Root<Doctor> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
-                if (experienceInYears != null) {
-                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("experienceInYears"), experienceInYears));
+                if (StartExperienceInYears != null && endExperienceInYears != null) {
+                    predicates.add(criteriaBuilder.and(
+                            criteriaBuilder.greaterThanOrEqualTo(root.get("experienceInYears"), StartExperienceInYears),
+                            criteriaBuilder.lessThanOrEqualTo(root.get("experienceInYears"), endExperienceInYears)
+                    ));
                 }
                 if(name != null) {
                     predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + name + "%"));

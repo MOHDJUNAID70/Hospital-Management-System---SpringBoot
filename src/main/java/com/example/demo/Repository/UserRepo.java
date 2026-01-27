@@ -9,6 +9,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface UserRepo extends JpaRepository<Users, Integer>, JpaSpecificationExecutor<Users> {
 
-    @Transactional
     Users findByUsername(String username);
 }

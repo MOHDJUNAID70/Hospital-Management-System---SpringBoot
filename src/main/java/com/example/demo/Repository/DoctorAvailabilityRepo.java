@@ -16,9 +16,9 @@ import java.util.Optional;
 @Repository
 public interface DoctorAvailabilityRepo extends JpaRepository<DoctorAvailability, Integer>, JpaSpecificationExecutor<DoctorAvailability> {
 
-    @Transactional
+
     List<DoctorAvailability> findByDoctorId(int id);
 
-    @Transactional
+
     Optional<DoctorAvailability> findByDoctorAndWorkingDay(Doctor doctor, WorkingDay workingDay);
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PatientSpecification {
-    public static Specification<Patient> getSpecification(String name, String address, Integer age) {
+    public static Specification<Patient> getSpecification(String name, String address, Integer StartAge, Integer EndAge) {
         return new Specification<Patient>(){
 
             @Override
@@ -24,8 +24,11 @@ public class PatientSpecification {
                if(address!=null && !address.isEmpty()) {
                    predicates.add(criteriaBuilder.like(root.get("address").as(String.class), "%" + address + "%"));
                }
-               if(age!=null){
-                   predicates.add(criteriaBuilder.equal(root.get("age").as(Integer.class),age));
+               if(StartAge!=null && EndAge!=null) {
+                   predicates.add(criteriaBuilder.and(
+                           criteriaBuilder.greaterThanOrEqualTo(root.get("age"), StartAge),
+                           criteriaBuilder.lessThanOrEqualTo(root.get("age"), EndAge)
+                   ));
                }
                 return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
             }

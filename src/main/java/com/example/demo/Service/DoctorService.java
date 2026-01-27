@@ -1,27 +1,21 @@
 package com.example.demo.Service;
 
-import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Enum.DoctorSpecializations;
-import com.example.demo.Model.Appointment;
+import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Model.DTO.DoctorDTO;
 import com.example.demo.Mapper.DoctorMapper;
-import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
 import com.example.demo.Model.Doctor;
-import com.example.demo.Model.DoctorAvailability;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
 import com.example.demo.Specification.DoctorSpecification;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 import java.util.List;
 
 @Service
@@ -47,10 +41,15 @@ public class DoctorService {
     }
 
     public List<DoctorDTO> getByexperienceInYears(int experience) {
-        return doctorRepo.findByexperienceInYears(experience).stream().map(doctorMapper::ToDTO).toList();
+        List<Doctor> doctor=doctorRepo.findByexperienceInYears(experience);
+        if(doctor.isEmpty()){
+            throw new CustomException("No Doctor is available with this experience");
+        }
+        return doctor.stream().map(doctorMapper::ToDTO).toList();
     }
 
     public void deleteById(int id) {
+        doctorRepo.findById(id).orElseThrow(()-> new CustomException("No Doctor is available with this id"));
         doctorRepo.deleteById(id);
     }
 
@@ -59,12 +58,13 @@ public class DoctorService {
     }
 
     public List<Doctor> getBySpecialization(DoctorSpecializations specialization) {
-        return doctorRepo.findBySpecialization(specialization);
+        List<Doctor> doctor=doctorRepo.findBySpecialization( specialization );
+        return doctor;
     }
 
-    public Page<DoctorDTO> fetchAll(Pageable pageable, Integer experienceInYears, String name,
+    public Page<DoctorDTO> fetchAll(Pageable pageable, Integer StartExperienceInYears, Integer endExperienceInYears, String name,
                                     DoctorSpecializations specializations) {
-        Specification<Doctor> spec= DoctorSpecification.getSpecification(experienceInYears, name, specializations);
+        Specification<Doctor> spec= DoctorSpecification.getSpecification(StartExperienceInYears, endExperienceInYears, name, specializations);
         return doctorRepo.findAll(spec, pageable).map(doctorMapper::ToDTO);
     }
 

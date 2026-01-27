@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Enum.WorkingDay;
+import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Mapper.AppointMapper;
 import com.example.demo.Model.Appointment;
@@ -49,12 +50,20 @@ public class AppointmentService {
 
 //    fetch appointments details by doctor ID
     public List<AppointmentDTO> appointmentbyDoctorId(int doctorId) {
-        return appointmentRepo.findByDoctorId(doctorId).stream().map(appointMapper::ToDTO).toList();
+        List<Appointment> appointments = appointmentRepo.findByDoctorId(doctorId);
+        if(appointments.isEmpty()){
+            throw new CustomException("No such Appointment exist with this Doctor id: "+doctorId);
+        }
+        return appointments.stream().map(appointMapper::ToDTO).toList();
     }
 
 //    fetch appointments details by date
     public List<AppointmentDTO> appointmentbyDate(LocalDate date) {
-        return appointmentRepo.findByappointmentDate(date).stream().map(appointMapper::ToDTO).toList();
+        List<Appointment> appointments=appointmentRepo.findByappointmentDate(date);
+        if(appointments.isEmpty()){
+            throw new CustomException("No such Appointment exists with this date: "+date);
+        }
+        return appointments.stream().map(appointMapper::ToDTO).toList();
     }
 
 //    Book an Appointment
@@ -155,13 +164,16 @@ public class AppointmentService {
 
     //    delete the appointments details by Date
     public void deleteAppointmentByDate(LocalDate date) {
-        Appointment appointment=new Appointment();
-
+        Appointment appointment=appointmentRepo.findByAppointmentDate(date);
+        if(appointment==null){
+            throw new CustomException("No such appointment exists with this date"+date);
+        }
         appointmentRepo.deleteAppointmentByAppointmentDate(date);
     }
 
 //    delete the appointment by appointment_id
     public void deleteAppointmentById(Integer id) {
+        appointmentRepo.findById(Long.valueOf(id)).orElseThrow(()->new CustomException("No Appointment exists with this id : "+id));
         appointmentRepo.deleteById(Long.valueOf(id));
     }
 
@@ -169,6 +181,10 @@ public class AppointmentService {
     public Page<AppointmentDTO> fetchAll(Pageable pageable, LocalDate appointmentDate,
                          AppointmentStatus status, LocalTime appointmentStartTime, LocalTime appointmentEndTime) {
         Specification<Appointment> spec= AppointmentSpecification.getSpecification(appointmentDate, status, appointmentStartTime, appointmentEndTime);
+        List<Appointment> appointments=appointmentRepo.findAll(spec);
+        if(appointments.isEmpty()){
+            throw new CustomException("No such appointment exists with this criteria");
+        }
         return appointmentRepo.findAll(spec, pageable).map(appointMapper::ToDTO);
     }
 }

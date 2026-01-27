@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.PatientMapper;
 import com.example.demo.Model.DTO.PatientDTO;
 import com.example.demo.Model.Patient;
@@ -9,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,23 +31,36 @@ public class PatientService {
     }
 
     public Patient getPatientById(int id) {
-        return patientRepo.findById(id).get();
+        return patientRepo.findById(id).orElseThrow(()-> new CustomException("No such patient with id " + id));
     }
 
     public Patient findPatientByageAndName(int age, String name) {
-        return patientRepo.findPatientByageAndName(age, name);
+        Patient patient=patientRepo.findPatientByAgeAndName(age, name);
+        if(patient==null){
+            throw new CustomException("No such patient exists with age " + age + " and name " + name);
+        }
+        return patient;
     }
 
     public List<Patient> getPatientsByAge(int age) {
-        return patientRepo.getPatientsByAge(age);
+        List<Patient> patients=patientRepo.getPatientsByAge(age);
+        if(patients.isEmpty()){
+            throw new CustomException("No such patient with age " + age);
+        }
+        return patients;
     }
 
     public void deletePatientById(int id) {
+        patientRepo.findById(id).orElseThrow(()-> new CustomException("No such patient Exists with id " + id));
         patientRepo.deleteById(id);
     }
 
-    public Page<PatientDTO> fetchAll(Pageable pageable, String name, String address, Integer age) {
-        Specification<Patient> spec= PatientSpecification.getSpecification(name, address, age);
+    public Page<PatientDTO> fetchAll(Pageable pageable, String name, String address, Integer StartAge, Integer EndAge) {
+        Specification<Patient> spec= PatientSpecification.getSpecification(name, address, StartAge, EndAge);
+        List<Patient> patients=patientRepo.findAll(spec);
+        if(patients.isEmpty()){
+            throw new CustomException("No such patient exists with given criteria");
+        }
         return patientRepo.findAll(spec, pageable).map(patientMapper::ToDTO);
     }
 }

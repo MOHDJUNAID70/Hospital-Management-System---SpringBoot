@@ -27,7 +27,6 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
 //            LocalTime appointmentTime
 //    );
 
-    @Transactional
     boolean existsByDoctorAndAppointmentDateAndAppointmentTimeLessThanAndAppointmentEndTimeGreaterThan(
             Doctor doctor,
             LocalDate appointmentDate,
@@ -35,26 +34,21 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
             LocalTime appointmentTime
     );
 
-    @Transactional
     List<Appointment> findByDoctorId(int Id);
 
-    @Transactional
     List<Appointment> findByappointmentDate(LocalDate appointmentDate);
 
-    @Transactional
     void deleteAppointmentByAppointmentDate(LocalDate date);
 
-    @Transactional
     boolean existsByDoctorAndPatientAndAppointmentDate(Doctor doctor, Patient patient,
                                                        LocalDate appointmentDate);
 
-    @Transactional
     boolean existsByPatientAndAppointmentDateAndAppointmentTimeLessThanAndAppointmentEndTimeGreaterThan(Patient patient,
              @NotNull LocalDate appointmentDate, LocalTime end, LocalTime appointmentTime);
 
-    @Transactional
     Optional< List<Appointment>> findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeAfter(Doctor doctor, LocalDate localDate, AppointmentStatus appointmentStatus, @NotNull LocalTime endTime);
 
-    @Transactional
     Page<Appointment> findByStatus(Pageable pageable, AppointmentStatus status);
+
+    Appointment findByAppointmentDate(LocalDate date);
 }

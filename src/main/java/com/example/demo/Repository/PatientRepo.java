@@ -15,12 +15,15 @@ import java.util.Optional;
 
 @Repository
 public interface PatientRepo extends JpaRepository<Patient, Integer>, JpaSpecificationExecutor<Patient> {
-    @Transactional
-    Patient findPatientByageAndName(int age, String name);
 
-    @Transactional
+    Patient findPatientByAgeAndName(int age, String name);
+
     List<Patient> getPatientsByAge(int age);
 
     @Transactional
     Page<Patient> findByGender(Pageable pageable, Gender gender, Specification<Patient> specification);
+
+
+    @Transactional
+    List<Patient> findByAgeIsGreaterThanEqual(Integer age);
 }

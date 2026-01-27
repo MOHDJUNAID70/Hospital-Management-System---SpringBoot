@@ -1,4 +1,4 @@
-package com.example.demo.Model.DTO;
+package com.example.demo.ExceptionHandler;
 
 
 import lombok.AllArgsConstructor;

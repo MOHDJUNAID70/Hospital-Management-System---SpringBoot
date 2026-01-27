@@ -15,10 +15,9 @@ import java.util.Optional;
 @Repository
 public interface DoctorRepo extends JpaRepository<Doctor, Integer>, JpaSpecificationExecutor<Doctor> {
     List<Doctor> findByexperienceInYears(int experienceInYears);
-    @Transactional
+
     void deleteByExperienceInYears(int experienceInYears);
 
-    @Transactional
     List<Doctor> findBySpecialization(DoctorSpecializations specialization);
 
     @Transactional

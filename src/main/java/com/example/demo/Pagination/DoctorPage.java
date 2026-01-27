@@ -33,23 +33,17 @@ public class DoctorPage {
     public Page<DoctorDTO> GetAllDoctors(@RequestParam(required = false, defaultValue = "1") int pageNo,
                                       @RequestParam(required = false, defaultValue = "4") int pageSize,
                                       @RequestParam(required = false, defaultValue = "id") String sortBy,
-                                      @RequestParam(required = false, defaultValue = "asc") String sortDirection,
-                                      @RequestParam(required = false) Integer experienceInYears,
+                                      @RequestParam(required = false) Integer StartExperienceInYears,
+                                      @RequestParam(required = false) Integer EndExperienceInYears,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false) DoctorSpecializations specializations
                                          ) {
-        Sort sort=null;
-        if(sortDirection.equalsIgnoreCase("asc")){
-            sort=Sort.by(sortBy).ascending();
-        }
-        else {
-            sort=Sort.by(sortBy).descending();
-        }
+        Sort sort=Sort.by(sortBy).ascending();
         Pageable pageable= PageRequest.of(pageNo-1,pageSize,sort);
 //        if(search==null){
 //            return doctorRepo.findAll(pageable).map(doctorMapper::ToDTO);
 //        }
 //        else return doctorRepo.findByName(pageable, search).map(doctorMapper::ToDTO);
-        return doctorService.fetchAll(pageable, experienceInYears, name, specializations);
+        return doctorService.fetchAll(pageable, StartExperienceInYears, EndExperienceInYears, name, specializations);
     }
 }
