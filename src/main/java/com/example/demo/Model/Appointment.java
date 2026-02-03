@@ -4,6 +4,8 @@ import com.example.demo.Enum.AppointmentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -13,13 +15,12 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class Appointment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @JoinColumn(name="appointmentid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer appointmentid;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
     @NotNull
@@ -29,6 +30,9 @@ public class Appointment {
     private LocalTime appointmentEndTime;
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+
+    private Timestamp StartTs;
+    private Timestamp EndTs;
 
     @PrePersist
     public void prePersist(){

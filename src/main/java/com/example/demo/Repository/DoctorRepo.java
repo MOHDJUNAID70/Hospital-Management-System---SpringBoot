@@ -14,12 +14,12 @@ import java.util.Optional;
 
 @Repository
 public interface DoctorRepo extends JpaRepository<Doctor, Integer>, JpaSpecificationExecutor<Doctor> {
+
     List<Doctor> findByexperienceInYears(int experienceInYears);
 
     void deleteByExperienceInYears(int experienceInYears);
 
     List<Doctor> findBySpecialization(DoctorSpecializations specialization);
 
-    @Transactional
     Page<Doctor> findByName(Pageable pageable, String name);
 }

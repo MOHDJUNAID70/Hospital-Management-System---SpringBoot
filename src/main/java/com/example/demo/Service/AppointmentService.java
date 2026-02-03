@@ -20,12 +20,12 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -67,6 +67,7 @@ public class AppointmentService {
     }
 
 //    Book an Appointment
+    @Transactional
     public void BookTheAppointment(@Valid Appointment appointment) {
         Doctor doctor=doctorRepo.findById(appointment.getDoctor().getId())
                 .orElseThrow(()->new RuntimeException("Doctor not found"));
@@ -84,6 +85,7 @@ public class AppointmentService {
 
         LocalTime appointmentTime=appointment.getAppointmentTime();
         LocalTime endtime=appointmentTime.plusMinutes(30);
+        LocalDateTime appointmentDateTime=LocalDateTime.of(appointment.getAppointmentDate(),appointmentTime);
 
 //        check weather the patient's appointment is already booked with the same doctor on same day.
         boolean alreadyBooked =
@@ -125,7 +127,9 @@ public class AppointmentService {
             throw new RuntimeException("This slot is overlapping with others slot!!!");
         }
 
-        LocalTime end = getLocalTime(appointmentTime, availability);
+        LocalTime end = getLocalTime(appointmentTime, availability, appointmentDateTime);
+
+        LocalDateTime localDateTimeEndTs = LocalDateTime.of(appointment.getAppointmentDate(), end);
 
         app.setAppointmentTime(appointmentTime);
         app.setAppointmentEndTime(end);
@@ -133,10 +137,12 @@ public class AppointmentService {
         app.setDoctor(doctor);
         app.setPatient(patient);
         app.setStatus(appointment.getStatus());
+        app.setStartTs(Timestamp.valueOf(appointmentDateTime));
+        app.setEndTs(Timestamp.valueOf(localDateTimeEndTs));
         appointmentRepo.save(app);
     }
 
-    private static @NonNull LocalTime getLocalTime(LocalTime appointmentTime, DoctorAvailability availability) {
+    private static @NonNull LocalTime getLocalTime(LocalTime appointmentTime, DoctorAvailability availability, LocalDateTime appointmentDateTime) {
         LocalTime end= appointmentTime.plusMinutes(30);
         LocalTime lunchStartTime= availability.getStartTime().plusHours(4);
         LocalTime lunchEndTime= availability.getStartTime().plusHours(5);
@@ -159,14 +165,20 @@ public class AppointmentService {
         if(appointmentTime.isBefore(availability.getStartTime()) ||  end.isAfter(availability.getEndTime())){
             throw new RuntimeException("Doctor is not available at this time, choose the time between "+availability.getStartTime()+" to "+availability.getEndTime());
         }
+
+//        you can't book the appointment in Past
+        if(appointmentDateTime.isBefore(LocalDateTime.now())){
+            throw new CustomException("You can't book appointment in the past");
+        }
         return end;
     }
 
+    @Transactional
     //    delete the appointments details by Date
     public void deleteAppointmentByDate(LocalDate date) {
         Appointment appointment=appointmentRepo.findByAppointmentDate(date);
         if(appointment==null){
-            throw new CustomException("No such appointment exists with this date"+date);
+            throw new CustomException("No such appointment exists with this date "+date);
         }
         appointmentRepo.deleteAppointmentByAppointmentDate(date);
     }

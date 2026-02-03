@@ -31,17 +31,12 @@ public class PatientPage {
             @RequestParam(required = false, defaultValue = "1") int pageNo,
             @RequestParam(required = false, defaultValue = "4") int pageSize,
             @RequestParam(required = false, defaultValue = "id") String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortDirection,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String address,
             @RequestParam(required = false) Integer StartAge,
             @RequestParam(required = false) Integer EndAge
             ) {
-        Sort sort=null;
-        if(sortDirection.equalsIgnoreCase("asc")){
-            sort=Sort.by(sortBy).ascending();
-        }
-        else sort=Sort.by(sortBy).descending();
+        Sort sort=Sort.by(sortBy).ascending();
         Pageable pageable= PageRequest.of(pageNo-1, pageSize, sort);
         return patientService.fetchAll(pageable, name, address, StartAge, EndAge);
     }

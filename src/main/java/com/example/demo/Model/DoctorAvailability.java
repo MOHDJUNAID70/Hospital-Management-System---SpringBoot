@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class DoctorAvailability {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id",  nullable = false)

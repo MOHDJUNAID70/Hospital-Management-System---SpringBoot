@@ -6,6 +6,7 @@ import com.example.demo.Model.DTO.PatientDTO;
 import com.example.demo.Model.Patient;
 import com.example.demo.Repository.PatientRepo;
 import com.example.demo.Specification.PatientSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ public class PatientService {
         return patientRepo.findAll();
     }
 
+    @Transactional
     public void addPatient(Patient patient) {
         patientRepo.save(patient);
     }

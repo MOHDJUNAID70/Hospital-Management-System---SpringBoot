@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -36,6 +37,7 @@ public class DoctorAvailabilityService {
     @Autowired
     private DoctorAvailabilityMapper doctorAvailabilityMapper;
 
+    @Transactional
     public void setAvailability(@Valid DoctorAvailability availability) {
         Doctor doctor = doctorRepo.findById(availability.getDoctor().getId()).orElseThrow(()-> new RuntimeException("doctor not found"));
         availability.setDoctor(doctor);
@@ -45,6 +47,7 @@ public class DoctorAvailabilityService {
         doctorAvailabilityRepo.save(availability);
     }
 
+    @Transactional
     public void updateDoctorAvailability(@Valid UpdateAvailabilityDTO request) {
         DoctorAvailability availability=doctorAvailabilityRepo.findById(request.getId())
                 .orElseThrow(()-> new RuntimeException("doctor availability not found"));

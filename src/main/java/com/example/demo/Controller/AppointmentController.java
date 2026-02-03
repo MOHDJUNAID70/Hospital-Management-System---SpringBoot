@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.Locking.OptimisticLocking;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Model.Appointment;
 import com.example.demo.Service.AppointmentService;
@@ -20,6 +21,9 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @Autowired
+    private OptimisticLocking optimisticLocking;
+
     @GetMapping("/all_appointments")
     public List<AppointmentDTO> getAppointments() {
         return appointmentService.getAllAppointments();
@@ -35,8 +39,14 @@ public class AppointmentController {
         return appointmentService.appointmentbyDate(date);
     }
 
+    @PostMapping("/book_appoint")
+    public ResponseEntity<String> OptimisticBooking() throws InterruptedException {
+        optimisticLocking.TestOptimisticLocking();
+        return new ResponseEntity<>("Appointment booked successfully", HttpStatus.OK);
+    }
+
     @PostMapping("/book_appointment")
-    public ResponseEntity<String> bookAppointment(@RequestBody @Valid Appointment appointment) {
+    public ResponseEntity<String> bookAppointment(@RequestBody @Valid Appointment appointment){
         appointmentService.BookTheAppointment(appointment);
         return new ResponseEntity<>("Your Appointment has been Done", HttpStatus.OK);
     }

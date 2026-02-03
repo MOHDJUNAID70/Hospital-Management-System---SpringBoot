@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class DoctorService {
     @Autowired
     AppointmentRepo appointmentRepo;
 
+    @Transactional
     public void addDoctor(Doctor doctor) {
         doctorRepo.save(doctor);
     }
@@ -39,6 +41,7 @@ public class DoctorService {
     public Doctor GetDoctorById(int id) {
         return doctorRepo.findById(id).orElseThrow(()-> new RuntimeException("Doctor Not Found"));
     }
+
 
     public List<DoctorDTO> getByexperienceInYears(int experience) {
         List<Doctor> doctor=doctorRepo.findByexperienceInYears(experience);
@@ -53,7 +56,12 @@ public class DoctorService {
         doctorRepo.deleteById(id);
     }
 
+    @Transactional
     public void deleteByExperienceInYears(int experience) {
+        List<Doctor> doc = doctorRepo.findByexperienceInYears(experience);
+        if(doc.isEmpty()){
+            throw new CustomException("No Doctor is available with experience : "+experience);
+        }
         doctorRepo.deleteByExperienceInYears(experience);
     }
 
@@ -68,6 +76,7 @@ public class DoctorService {
         return doctorRepo.findAll(spec, pageable).map(doctorMapper::ToDTO);
     }
 
+    @Transactional
     public void updateDoctorInfo(@Valid Doctor doctor) {
         Doctor doc=doctorRepo.findById(doctor.getId()).orElseThrow(()-> new RuntimeException("Doctor Not Found"));
         doc.setName(doctor.getName());
