@@ -39,16 +39,17 @@ public class AppointmentController {
         return appointmentService.appointmentbyDate(date);
     }
 
-    @PostMapping("/book_appoint")
+    @GetMapping("/book_appoint")
     public ResponseEntity<String> OptimisticBooking() throws InterruptedException {
         optimisticLocking.TestOptimisticLocking();
         return new ResponseEntity<>("Appointment booked successfully", HttpStatus.OK);
     }
 
     @PostMapping("/book_appointment")
-    public ResponseEntity<String> bookAppointment(@RequestBody @Valid Appointment appointment){
-        appointmentService.BookTheAppointment(appointment);
-        return new ResponseEntity<>("Your Appointment has been Done", HttpStatus.OK);
+    public ResponseEntity<String> bookAppointment(@RequestHeader("Idempotency-Key") String key,
+            @RequestBody @Valid Appointment appointment){
+        appointmentService.BookTheAppointmentWithIdempotency(key, appointment);
+        return new ResponseEntity<>("Your Appointment has been Booked", HttpStatus.OK);
     }
 
     @DeleteMapping("appointment_deleted_with_date")

@@ -46,7 +46,7 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
     boolean existsByPatientAndAppointmentDateAndAppointmentTimeLessThanAndAppointmentEndTimeGreaterThan(Patient patient,
              @NotNull LocalDate appointmentDate, LocalTime end, LocalTime appointmentTime);
 
-    Optional< List<Appointment>> findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeAfter(Doctor doctor, LocalDate localDate, AppointmentStatus appointmentStatus, @NotNull LocalTime endTime);
+    Optional< List<Appointment>> findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeBeforeOrAppointmentEndTimeAfter(Doctor doctor, LocalDate localDate, AppointmentStatus appointmentStatus, @NotNull LocalTime startTime, @NotNull LocalTime endTime);
 
     Page<Appointment> findByStatus(Pageable pageable, AppointmentStatus status);
 

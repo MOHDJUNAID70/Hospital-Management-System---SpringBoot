@@ -3,16 +3,10 @@ package com.example.demo.Service;
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Enum.WorkingDay;
 import com.example.demo.ExceptionHandler.CustomException;
+import com.example.demo.Model.*;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Mapper.AppointMapper;
-import com.example.demo.Model.Appointment;
-import com.example.demo.Model.Doctor;
-import com.example.demo.Model.DoctorAvailability;
-import com.example.demo.Model.Patient;
-import com.example.demo.Repository.AppointmentRepo;
-import com.example.demo.Repository.DoctorAvailabilityRepo;
-import com.example.demo.Repository.DoctorRepo;
-import com.example.demo.Repository.PatientRepo;
+import com.example.demo.Repository.*;
 import com.example.demo.Specification.AppointmentSpecification;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -21,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -42,6 +39,8 @@ public class AppointmentService {
     private AppointMapper appointMapper;
     @Autowired
     private DoctorAvailabilityRepo doctorAvailabilityRepo;
+    @Autowired
+    private IdempotencyRepo idempotencyRepo;
 
 //    fetch all appointments
     public List<AppointmentDTO> getAllAppointments(){
@@ -67,6 +66,40 @@ public class AppointmentService {
     }
 
 //    Book an Appointment
+    @Transactional
+    public ResponseEntity<String> BookTheAppointmentWithIdempotency(String key, @Valid Appointment appointment) {
+
+        String requestHash=generateHash(appointment);
+
+        IdempotencyKey existingKey=idempotencyRepo.findByIdempotencyKeyAndExpiresAtAfter(key, LocalDateTime.now());
+
+        if(existingKey!=null){
+            if(!existingKey.getRequestHash().equals(requestHash)){
+                throw new CustomException("Idempotency key reused with different request");
+            }
+            throw new CustomException(existingKey.getResponseBody());
+        }
+        BookTheAppointment(appointment);
+
+        IdempotencyKey record=new IdempotencyKey();
+        record.setRequestHash(requestHash);
+        record.setIdempotencyKey(key);
+        record.setResponseBody("Appointment has been Booked Successfully last time");
+        record.setExpiresAt(LocalDateTime.now().plusMinutes(10));
+        idempotencyRepo.save(record);
+
+        return new ResponseEntity<>(record.getResponseBody(), HttpStatus.OK);
+    }
+
+    private String generateHash(Appointment app){
+        return DigestUtils.md5DigestAsHex(
+                (app.getDoctor().getId()+
+                                "|"+app.getPatient().getId()+
+                                "|"+app.getAppointmentDate()+
+                                "|"+app.getAppointmentTime()).getBytes()
+        );
+    }
+
     @Transactional
     public void BookTheAppointment(@Valid Appointment appointment) {
         Doctor doctor=doctorRepo.findById(appointment.getDoctor().getId())

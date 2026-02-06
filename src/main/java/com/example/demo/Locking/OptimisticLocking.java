@@ -18,19 +18,21 @@ public class OptimisticLocking {
     private AppointmentService appointmentService;
 
     public void TestOptimisticLocking() throws InterruptedException {
+        String key="booking-key: 123";
+
         Thread th1=new Thread(()->{
             try {
                 Appointment ap1 = new Appointment();
                 Doctor doc1 = new Doctor();
-                doc1.setId(305);
+                doc1.setId(10);
                 Patient p1 = new Patient();
-                p1.setId(502);
+                p1.setId(2);
                 ap1.setDoctor(doc1);
                 ap1.setPatient(p1);
-                ap1.setAppointmentDate(LocalDate.of(2026,2,5));
-                ap1.setAppointmentTime(LocalTime.of(15,25,15));
+                ap1.setAppointmentDate(LocalDate.of(2026,2,6));
+                ap1.setAppointmentTime(LocalTime.of(11,25,15));
                 System.out.println("thread1 is trying to book the appointment");
-                appointmentService.BookTheAppointment(ap1);
+                appointmentService.BookTheAppointmentWithIdempotency(key, ap1);
                 System.out.println("Thread1 has been successfully booked");
             }catch (DataIntegrityViolationException e){
                 throw new DataIntegrityViolationException(e.getMessage());
@@ -41,15 +43,15 @@ public class OptimisticLocking {
             try {
                 Appointment ap2 = new Appointment();
                 Doctor doc2 = new Doctor();
-                doc2.setId(305);
+                doc2.setId(10);
                 Patient p2 = new Patient();
-                p2.setId(402);
+                p2.setId(2);
                 ap2.setDoctor(doc2);
                 ap2.setPatient(p2);
-                ap2.setAppointmentDate(LocalDate.of(2026,2,5));
-                ap2.setAppointmentTime(LocalTime.of(15, 25, 16));
+                ap2.setAppointmentDate(LocalDate.of(2026,2,6));
+                ap2.setAppointmentTime(LocalTime.of(11, 25, 15));
                 System.out.println("thread2 is trying to book the appointment");
-                appointmentService.BookTheAppointment(ap2);
+                appointmentService.BookTheAppointmentWithIdempotency(key, ap2);
                 System.out.println("Thread2 has been successfully booked");
             }catch (DataIntegrityViolationException e){
                 throw new DataIntegrityViolationException(e.getMessage());

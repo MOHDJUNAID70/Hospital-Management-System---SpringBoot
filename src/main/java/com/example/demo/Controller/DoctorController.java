@@ -104,7 +104,7 @@ public class DoctorController {
     public ResponseEntity<String> updateDoctorAvailability(@RequestBody @Valid UpdateAvailabilityDTO request) {
         doctorAvailabilityService.updateDoctorAvailability(request);
         return new ResponseEntity<>("Doctor's Availability updated and " +
-                "the appointments have been cancelled which are after the "+request.getEndTime()+" a.m/p.m !!!", HttpStatus.OK);
+                "the appointments have been cancelled which are before and after the time "+request.getStartTime()+" and "+ request.getEndTime(), HttpStatus.OK);
     }
 
     // get the doctor's timetable by their id

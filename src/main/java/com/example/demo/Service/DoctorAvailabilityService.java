@@ -47,7 +47,7 @@ public class DoctorAvailabilityService {
         doctorAvailabilityRepo.save(availability);
     }
 
-    @Transactional
+
     public void updateDoctorAvailability(@Valid UpdateAvailabilityDTO request) {
         DoctorAvailability availability=doctorAvailabilityRepo.findById(request.getId())
                 .orElseThrow(()-> new RuntimeException("doctor availability not found"));
@@ -57,19 +57,20 @@ public class DoctorAvailabilityService {
         CancelAffectedAppointments(
                 availability.getDoctor(),
                 availability.getWorkingDay(),
+                request.getStartTime(),
                 request.getEndTime()
         );
     }
-    private void CancelAffectedAppointments(Doctor doctor, @NotNull WorkingDay workingDay, @NotNull LocalTime endTime) {
+    private void CancelAffectedAppointments(Doctor doctor, @NotNull WorkingDay workingDay, @NotNull LocalTime startTime, @NotNull LocalTime endTime) {
         LocalDate localDate = LocalDate.now();
         if(!localDate.getDayOfWeek().name().equals(workingDay.name())) {
             throw new RuntimeException("invalid day of week");
         }
-        List<Appointment> appointments=appointmentRepo.findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeAfter(
-                doctor,localDate, AppointmentStatus.Booked, endTime
+        List<Appointment> appointments=appointmentRepo.findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeBeforeOrAppointmentEndTimeAfter(
+                doctor,localDate, AppointmentStatus.Booked, startTime, endTime
         ).orElseThrow(()-> new RuntimeException("appointment not found"));
         if(appointments.isEmpty()) {
-            throw new CustomException("No such appointment exists with this criteria");
+            throw new CustomException("No such appointment exists before this time: " + startTime + " and after this time: "+endTime + " and availability has been updated");
         };
         for(Appointment appointment : appointments) {
             appointment.setStatus(AppointmentStatus.Cancelled);
