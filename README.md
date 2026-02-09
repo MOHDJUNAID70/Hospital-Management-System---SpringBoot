@@ -42,8 +42,6 @@ This system prioritizes data integrity, concurrency safety, and API reliability 
 - RESTful API design
 - Production-ready security features
 
----
-
 ## Features
 
 ### Core Features
@@ -60,13 +58,11 @@ This system prioritizes data integrity, concurrency safety, and API reliability 
 - Medical history tracking
 - Contact information management
 - Emergency contact details
-- Health insurance information
 - Appointment history
 
 #### 3. **Doctor Management**
 - Doctor profile creation and management
 - Specialization tracking
-- License number verification
 - Department assignment
 - Availability scheduling
 - Consultation fee management
@@ -84,13 +80,6 @@ This system prioritizes data integrity, concurrency safety, and API reliability 
 - Department descriptions and contact information
 - Assign doctors to departments
 - Track department operations
-
-#### 6. **Billing & Invoice System**
-- Generate patient invoices
-- Track billing status
-- Payment recording
-- Insurance claim management
-- Billing history
 
 ### Technical Features
 
@@ -299,22 +288,20 @@ This system prioritizes data integrity, concurrency safety, and API reliability 
   ```bash
   java -version
 
-Installation & Setup
+### Installation & Setup
   # Clone the repository
 git clone https://github.com/MOHDJUNAID70/Hospital-Management-System---SpringBoot.git
-
 # Navigate to the project directory
 cd Hospital-Management-System---SpringBoot
 
-API Documentation
+**API Documentation**
 Auto-Generated Swagger Documentation
 Once the application is running, access the interactive API documentation:
-
 Swagger UI: http://localhost:7060/api/swagger-ui.html
 OpenAPI JSON: http://localhost:7060/api/v3/api-docs
 OpenAPI YAML: http://localhost:7060/api/v3/api-docs.yaml
 
-Authentication API
+**Authentication API**
 
 <img width="1919" height="914" alt="Screenshot 2026-02-09 224747" src="https://github.com/user-attachments/assets/4829971a-a677-4085-b53a-883574b4da7a" />
 <img width="1917" height="909" alt="Screenshot 2026-02-09 224805" src="https://github.com/user-attachments/assets/96080dd1-99e5-4749-9cdc-14dfa8a69f87" />
