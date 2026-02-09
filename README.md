@@ -3,7 +3,6 @@
 A robust, production-ready backend system for managing hospital operations. Built with Spring Boot and PostgreSQL, this system features secure authentication, concurrency-safe appointment booking, and enterprise-grade transactional design.
 
 ## 📋 Table of Contents
-
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -25,7 +24,6 @@ A robust, production-ready backend system for managing hospital operations. Buil
 ## Overview
 
 The Hospital Management System is a comprehensive backend solution designed to streamline hospital operations. This enterprise-level application provides:
-
 - **Patient Management**: Complete patient registration, profile management, and medical history tracking
 - **Doctor & Staff Administration**: Manage doctor profiles, specializations, and availability
 - **Appointment Scheduling**: Concurrency-safe booking system preventing double-bookings
@@ -184,9 +182,104 @@ This system prioritizes data integrity, concurrency safety, and API reliability 
 ---
 
 ## Project Structure
-
-Hospital-Management-System---SpringBoot/ │ ├── src/ │ ├── main/ │ │ ├── java/ │ │ │ └── com/ │ │ │ └── hospital/ │ │ │ ├── HospitalManagementSystemApplication.java # Main application class │ │ │ │ │ │ │ ├── config/ # Configuration classes │ │ │ │ ├── SecurityConfig.java # Spring Security configuration │ │ │ │ ├── JwtConfig.java # JWT configuration │ │ │ │ ├── WebConfig.java # Web MVC configuration │ │ │ │ └── DatabaseConfig.java # Database configuration │ │ │ │ │ │ │ ├── controller/ # REST Controllers │ │ │ │ ├── AuthController.java # Authentication endpoints │ │ │ │ ├── PatientController.java # Patient management endpoints │ │ │ │ ├── DoctorController.java # Doctor management endpoints │ │ │ │ ├── AppointmentController.java # Appointment booking endpoints │ │ │ │ ├── DepartmentController.java # Department management endpoints │ │ │ │ ├── BillingController.java # Billing endpoints │ │ │ │ └── StaffController.java # Staff management endpoints │ │ │ │ │ │ │ ├── service/ # Business Logic │ │ │ │ ├── impl/ │ │ │ │ │ ├── AuthServiceImpl.java │ │ │ │ │ ├── PatientServiceImpl.java │ │ │ │ │ ├── DoctorServiceImpl.java │ │ │ │ │ ├── AppointmentServiceImpl.java │ │ │ │ │ ├── DepartmentServiceImpl.java │ │ │ │ │ ├── BillingServiceImpl.java │ │ │ │ │ └── StaffServiceImpl.java │ │ │ │ └── Interface files (Services) │ │ │ │ │ │ │ ├── repository/ # Data Access Layer │ │ │ │ ├── UserRepository.java │ │ │ │ ├── PatientRepository.java │ │ │ │ ├── DoctorRepository.java │ │ │ │ ├── AppointmentRepository.java │ │ │ │ ├── DepartmentRepository.java │ │ │ │ ├── BillingRepository.java │ │ │ │ └── StaffRepository.java │ │ │ │ │ │ │ ├── entity/ # JPA Entities │ │ │ │ ├── User.java │ │ │ │ ├── Patient.java │ │ │ │ ├── Doctor.java │ │ │ │ ├── Appointment.java │ │ │ │ ├── Department.java │ │ │ │ ├── Billing.java │ │ │ │ ├── Staff.java │ │ │ │ └── BaseEntity.java # Abstract base class │ │ │ │ │ │ │ ├── dto/ # Data Transfer Objects │ │ │ │ ├── UserDTO.java │ │ │ │ ├── PatientDTO.java │ │ │ │ ├── DoctorDTO.java │ │ │ │ ├── AppointmentDTO.java │ │ │ │ ├── DepartmentDTO.java │ │ │ │ ├── BillingDTO.java │ │ │ │ └── StaffDTO.java │ │ │ │ │ │ │ ├── exception/ # Custom Exceptions │ │ │ │ ├── ResourceNotFoundException.java │ │ │ │ ├── DuplicateResourceException.java │ │ │ │ ├── AppointmentBookingException.java │ │ │ │ ├── UnauthorizedException.java │ │ │ │ ├── ValidationException.java │ │ │ │ └── GlobalExceptionHandler.java │ │ │ │ │ │ │ ├── security/ # Security Classes │ │ │ │ ├── JwtTokenProvider.java │ │ │ │ ├── JwtAuthenticationFilter.java │ │ │ │ ├── UserDetailsServiceImpl.java │ │ │ │ └── AuthenticationFailureHandler.java │ │ │ │ │ │ │ ├── util/ # Utility Classes │ │ │ │ ├── DateUtil.java │ │ │ │ ├── ValidationUtil.java │ │ │ │ ├── EncryptionUtil.java │ │ │ │ └── IdempotencyUtil.java │ │ │ │ │ │ │ └── mapper/ # Entity-DTO Mappers │ │ │ ├── PatientMapper.java │ │ │ ├── DoctorMapper.java │ │ │ └── AppointmentMapper.java │ │ │ │ │ └── resources/ │ │ ├── application.yml # Main application properties │ │ ├── application-dev.yml # Development environment │ │ ├── application-prod.yml # Production environment │ │ ├── application-test.yml # Test environment │ │ ├── logback-spring.xml # Logging configuration │ │ └── db/ │ │ ├── migration/ # Flyway migrations │ │ │ ├── V1__init_database.sql │ │ │ ├── V2__create_users_table.sql │ │ │ ├── V3__create_patients_table.sql │ │ │ ├── V4__create_doctors_table.sql │ │ │ ├── V5__create_appointments_table.sql │ │ │ ├── V6__create_departments_table.sql │ │ │ ├── V7__create_billing_table.sql │ │ │ └── V8__add_indexes.sql │ │ └── seed/ # Initial data │ │ └── seed-data.sql │ │ │ └── test/ │ ├── java/ │ │ └── com/ │ │ └── hospital/ │ │ ├── controller/ # Controller tests │ │ │ ├── AuthControllerTest.java │ │ │ ├── PatientControllerTest.java │ │ │ ├── DoctorControllerTest.java │ │ │ └── AppointmentControllerTest.java │ │ ├── service/ # Service tests │ │ │ ├── AuthServiceTest.java │ │ │ ├── PatientServiceTest.java │ │ │ ├── DoctorServiceTest.java │ │ │ └── AppointmentServiceTest.java │ │ └── repository/ # Repository tests │ │ ├── PatientRepositoryTest.java │ │ ├── DoctorRepositoryTest.java │ │ └── AppointmentRepositoryTest.java │ └── resources/ │ ├── application-test.yml # Test configuration │ └── test-data.sql # Test data │ ├── .mvn/ # Maven wrapper ├── mvnw # Maven wrapper (Unix) ├── mvnw.cmd # Maven wrapper (Windows) ├── pom.xml # Maven dependencies ├── .gitignore # Git ignore rules ├── .gitattributes # Git attributes ├── README.md
-
+├── .gitattributes
+├── src/ (23500 tokens)
+    ├── main/ (23400 tokens)
+    │   ├── java/ (23200 tokens)
+    │   │   └── com/ (23200 tokens)
+    │   │   │   └── example/ (23200 tokens)
+    │   │   │       └── demo/ (23200 tokens)
+    │   │   │           ├── Enum/ (500 tokens)
+    │   │   │               ├── Role.java
+    │   │   │               ├── Gender.java
+    │   │   │               ├── AppointmentStatus.java
+    │   │   │               ├── WorkingDay.java
+    │   │   │               └── DoctorSpecializations.java
+    │   │   │           ├── ExceptionHandler/ (700 tokens)
+    │   │   │               ├── CustomException.java
+    │   │   │               ├── ErrorResponseDTO.java
+    │   │   │               └── GlobalExceptionHandler.java (500 tokens)
+    │   │   │           ├── Model/ (2800 tokens)
+    │   │   │               ├── DTO/ (1100 tokens)
+    │   │   │               │   ├── PatientDTO.java
+    │   │   │               │   ├── UserInfoDTO.java
+    │   │   │               │   ├── DoctorDTO.java
+    │   │   │               │   ├── UpdateAvailabilityDTO.java
+    │   │   │               │   ├── DoctorAvailabilityDTO.java (200 tokens)
+    │   │   │               │   ├── AppointmentDTO.java (200 tokens)
+    │   │   │               │   └── UserRegistrationDTO.java (300 tokens)
+    │   │   │               ├── Users.java (200 tokens)
+    │   │   │               ├── IdempotencyKey.java (200 tokens)
+    │   │   │               ├── DoctorAvailability.java (200 tokens)
+    │   │   │               ├── UserPrincipal.java (200 tokens)
+    │   │   │               ├── Doctor.java (300 tokens)
+    │   │   │               ├── Patient.java (300 tokens)
+    │   │   │               └── Appointment.java (300 tokens)
+    │   │   │           ├── Mapper/ (1000 tokens)
+    │   │   │               ├── UserMapper.java
+    │   │   │               ├── PatientMapper.java
+    │   │   │               ├── DoctorMapper.java
+    │   │   │               ├── DoctorAvailabilityMapper.java
+    │   │   │               ├── AppointMapper.java (200 tokens)
+    │   │   │               └── AppointmentMapper.java (400 tokens)
+    │   │   │           ├── HospitalManagementApplication.java
+    │   │   │           ├── Repository/ (1800 tokens)
+    │   │   │               ├── UserRepo.java (200 tokens)
+    │   │   │               ├── IdempotencyRepo.java (200 tokens)
+    │   │   │               ├── DoctorAvailabilityRepo.java (200 tokens)
+    │   │   │               ├── DoctorRepo.java (300 tokens)
+    │   │   │               ├── PatientRepo.java (300 tokens)
+    │   │   │               └── AppointmentRepo.java (600 tokens)
+    │   │   │           ├── Controller/ (2900 tokens)
+    │   │   │               ├── DashboardController.java (200 tokens)
+    │   │   │               ├── UserController.java (300 tokens)
+    │   │   │               ├── PatientController.java (500 tokens)
+    │   │   │               ├── AppointmentController.java (600 tokens)
+    │   │   │               └── DoctorController.java (1300 tokens)
+    │   │   │           ├── Config/ (1200 tokens)
+    │   │   │               ├── IdempotencyCleanupJob.java (200 tokens)
+    │   │   │               ├── SwaggerConfig.java (400 tokens)
+    │   │   │               └── SecurityConfig.java (600 tokens)
+    │   │   │           ├── Service/ (5700 tokens)
+    │   │   │               ├── MyUserDetailService.java (300 tokens)
+    │   │   │               ├── PatientService.java (600 tokens)
+    │   │   │               ├── UserService.java (600 tokens)
+    │   │   │               ├── DoctorService.java (800 tokens)
+    │   │   │               ├── DoctorAvailabilityService.java (1000 tokens)
+    │   │   │               └── AppointmentService.java (2400 tokens)
+    │   │   │           ├── Specification/ (2200 tokens)
+    │   │   │               ├── UserSpecification.java (400 tokens)
+    │   │   │               ├── DoctorAvailabilitySpecification.java (400 tokens)
+    │   │   │               ├── PatientSpecification.java (400 tokens)
+    │   │   │               ├── DoctorSpecification.java (500 tokens)
+    │   │   │               └── AppointmentSpecification.java (500 tokens)
+    │   │   │           ├── Pagination/ (2600 tokens)
+    │   │   │               ├── UserPage.java (400 tokens)
+    │   │   │               ├── PatientPage.java (500 tokens)
+    │   │   │               ├── DoctorAvailabilityPage.java (500 tokens)
+    │   │   │               ├── AppointmentPage.java (600 tokens)
+    │   │   │               └── DoctorPage.java (600 tokens)
+    │   │   │           ├── JWT/ (1100 tokens)
+    │   │   │               ├── JwtFilter.java (500 tokens)
+    │   │   │               └── JWTService.java (600 tokens)
+    │   │   │           └── Locking/ (600 tokens)
+    │   │   │               └── OptimisticLocking.java (600 tokens)
+    │   └── resources/ (200 tokens)
+    │   │   └── application.properties (200 tokens)
+    └── test/ (100 tokens)
+    │   └── java/ (100 tokens)
+    │       └── com/ (100 tokens)
+    │           └── example/ (100 tokens)
+    │               └── demo/ (100 tokens)
+    │                   └── HospitalManagementApplicationTests.java
+├── .mvn/ (100 tokens)
+    └── wrapper/ (100 tokens)
+    │   └── maven-wrapper.properties
+├── .gitignore
+├── pom.xml (1200 tokens)
+├── mvnw.cmd (2000 tokens)
+├── mvnw (2700 tokens)
+└── README.md (2800 tokens)
 
 ---
 
@@ -227,7 +320,8 @@ Authentication API
 <img width="1917" height="909" alt="Screenshot 2026-02-09 224805" src="https://github.com/user-attachments/assets/96080dd1-99e5-4749-9cdc-14dfa8a69f87" />
 <img width="1919" height="717" alt="Screenshot 2026-02-09 224839" src="https://github.com/user-attachments/assets/c2154b16-4ebf-40ff-b128-021f17afafa1" />
 
-Key Features Explained
+
+**Key Features Explained**
 1. Concurrency-Safe Appointment Booking
 Problem: Without proper constraints, two users can simultaneously book the same doctor at the same time slot.
 Solution: Database-level UNIQUE constraint prevents race conditions:
@@ -246,7 +340,7 @@ Server stores the key and response
 If same key received again, returns cached response
 No duplicate operations occur
 
-Contact
+**Contact**
 Author Information
 Name: MOHD JUNAID
 GitHub: @MOHDJUNAID70
