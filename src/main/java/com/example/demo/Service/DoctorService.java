@@ -5,6 +5,7 @@ import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Model.DTO.DoctorDTO;
 import com.example.demo.Mapper.DoctorMapper;
 import com.example.demo.Model.Doctor;
+import com.example.demo.Redis.RedisCacheService;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
@@ -26,12 +27,12 @@ public class DoctorService {
     DoctorRepo doctorRepo;
     @Autowired
     DoctorMapper doctorMapper;
-
     @Autowired
     DoctorAvailabilityRepo doctorAvailabilityRepo;
-
     @Autowired
     AppointmentRepo appointmentRepo;
+    @Autowired
+    RedisCacheService redisCacheService;
 
     @Transactional
     public void addDoctor(Doctor doctor) {
@@ -66,7 +67,13 @@ public class DoctorService {
     }
 
     public List<Doctor> getBySpecialization(DoctorSpecializations specialization) {
+        String cacheKey=specialization.name();
+        List<Doctor> cached= redisCacheService.getDoctorBySpecialization(cacheKey);
+        if(cached!=null){
+            return cached;
+        }
         List<Doctor> doctor=doctorRepo.findBySpecialization( specialization );
+        redisCacheService.setDoctorBySpecialization(cacheKey,doctor);
         return doctor;
     }
 

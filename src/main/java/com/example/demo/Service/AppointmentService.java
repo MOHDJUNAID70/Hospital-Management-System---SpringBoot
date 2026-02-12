@@ -3,9 +3,13 @@ package com.example.demo.Service;
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Enum.WorkingDay;
 import com.example.demo.ExceptionHandler.CustomException;
+import com.example.demo.Idempotency.IdempotencyKey;
+import com.example.demo.Idempotency.IdempotencyRepo;
 import com.example.demo.Model.*;
 import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Mapper.AppointMapper;
+import com.example.demo.Model.DTO.IdempotencyRecordDTO;
+import com.example.demo.Redis.RedisIdempotencyService;
 import com.example.demo.Repository.*;
 import com.example.demo.Specification.AppointmentSpecification;
 import jakarta.transaction.Transactional;
@@ -41,6 +45,8 @@ public class AppointmentService {
     private DoctorAvailabilityRepo doctorAvailabilityRepo;
     @Autowired
     private IdempotencyRepo idempotencyRepo;
+    @Autowired
+    private RedisIdempotencyService redisIdempotencyService;
 
 //    fetch all appointments
     public List<AppointmentDTO> getAllAppointments(){
@@ -65,7 +71,7 @@ public class AppointmentService {
         return appointments.stream().map(appointMapper::ToDTO).toList();
     }
 
-//    Book an Appointment
+//    Book an Appointment with Idempotency Check
     @Transactional
     public ResponseEntity<String> BookTheAppointmentWithIdempotency(String key, @Valid Appointment appointment) {
 
@@ -77,7 +83,7 @@ public class AppointmentService {
             if(!existingKey.getRequestHash().equals(requestHash)){
                 throw new CustomException("Idempotency key reused with different request");
             }
-            throw new CustomException(existingKey.getResponseBody());
+            return ResponseEntity.ok(existingKey.getResponseBody());
         }
         BookTheAppointment(appointment);
 
@@ -91,6 +97,29 @@ public class AppointmentService {
         return new ResponseEntity<>(record.getResponseBody(), HttpStatus.OK);
     }
 
+    // book an appointment with idempotency check through Redis
+    @Transactional
+    public ResponseEntity<String> BookWithIdempotency(String key, @Valid Appointment appointment) {
+
+        String requestHash=generateHash(appointment);
+        IdempotencyRecordDTO record=redisIdempotencyService.getIdempotencyRecord(key);
+
+        if(record!=null){
+            if(!record.getRequestHash().equals(requestHash)){
+                throw new CustomException("Idempotency key reused with different request");
+            }
+            throw new CustomException(record.getResponse());
+        }
+
+        BookTheAppointment(appointment);
+        IdempotencyRecordDTO object=new IdempotencyRecordDTO();
+        object.setRequestHash(requestHash);
+        object.setResponse("Appointment has been Booked Successfully last time");
+
+        redisIdempotencyService.save(key, object);
+        return new ResponseEntity<>("Appointment has been Booked Successfully!!!",  HttpStatus.OK);
+    }
+
     private String generateHash(Appointment app){
         return DigestUtils.md5DigestAsHex(
                 (app.getDoctor().getId()+
@@ -100,6 +129,7 @@ public class AppointmentService {
         );
     }
 
+    //    Book an Appointment
     @Transactional
     public void BookTheAppointment(@Valid Appointment appointment) {
         Doctor doctor=doctorRepo.findById(appointment.getDoctor().getId())
@@ -232,4 +262,5 @@ public class AppointmentService {
         }
         return appointmentRepo.findAll(spec, pageable).map(appointMapper::ToDTO);
     }
+
 }

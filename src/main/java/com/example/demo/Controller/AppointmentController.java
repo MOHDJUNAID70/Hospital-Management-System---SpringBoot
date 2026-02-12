@@ -52,6 +52,13 @@ public class AppointmentController {
         return new ResponseEntity<>("Your Appointment has been Booked", HttpStatus.OK);
     }
 
+    @PostMapping("/appointment/booking")
+    public ResponseEntity<String> bookAppointmentWithIdempotencyCheckThroughRedis(@RequestHeader("Idempotency-Key") String key,
+                                                  @RequestBody @Valid Appointment appointment){
+        appointmentService.BookWithIdempotency(key, appointment);
+        return new ResponseEntity<>("Your Appointment has been Booked", HttpStatus.OK);
+    }
+
     @DeleteMapping("appointment_deleted_with_date")
     public ResponseEntity<String> deleteAppointmentByDate(@RequestParam("date") LocalDate date){
         appointmentService.deleteAppointmentByDate(date);

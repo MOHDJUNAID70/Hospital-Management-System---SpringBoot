@@ -4,6 +4,7 @@ import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.PatientMapper;
 import com.example.demo.Model.DTO.PatientDTO;
 import com.example.demo.Model.Patient;
+import com.example.demo.Redis.RedisCacheService;
 import com.example.demo.Repository.PatientRepo;
 import com.example.demo.Specification.PatientSpecification;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,8 @@ public class PatientService {
     PatientRepo patientRepo;
     @Autowired
     private PatientMapper patientMapper;
+    @Autowired
+    private RedisCacheService redisCacheService;
 
     public List<Patient> getAllPatients() {
         return patientRepo.findAll();
@@ -33,7 +36,14 @@ public class PatientService {
     }
 
     public Patient getPatientById(int id) {
-        return patientRepo.findById(id).orElseThrow(()-> new CustomException("No such patient with id " + id));
+        String cacheKey=String.valueOf(id);
+        Patient cached=redisCacheService.getPatientById(cacheKey);
+        if(cached!=null){
+            return cached;
+        }
+        Patient patient=patientRepo.findById(id).orElseThrow(()->new CustomException("Patient not found!!!"));
+        redisCacheService.setPatientById(cacheKey,patient);
+        return patient;
     }
 
     public Patient findPatientByageAndName(int age, String name) {

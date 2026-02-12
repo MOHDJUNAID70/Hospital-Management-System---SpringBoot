@@ -9,6 +9,7 @@ import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
 import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Model.DoctorAvailability;
+import com.example.demo.Redis.RedisCacheService;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
@@ -36,6 +37,8 @@ public class DoctorAvailabilityService {
     private AppointmentRepo appointmentRepo;
     @Autowired
     private DoctorAvailabilityMapper doctorAvailabilityMapper;
+    @Autowired
+    private RedisCacheService redisCacheService;
 
     @Transactional
     public void setAvailability(@Valid DoctorAvailability availability) {
@@ -86,5 +89,20 @@ public class DoctorAvailabilityService {
             throw new CustomException("No Availability exists with this criteria");
         }
         return doctorAvailabilityRepo.findAll(specification, pageable).map(doctorAvailabilityMapper::ToDTO);
+    }
+
+    public List<DoctorAvailabilityDTO> getAvailabilityByDoctorId(int id) {
+        String cacheKey=String.valueOf(id);
+        List<DoctorAvailabilityDTO> cached=redisCacheService.getDoctorAvailabilityByTheirId(cacheKey);
+        if(cached!=null){
+            return cached;
+        }
+        List<DoctorAvailability> availability=doctorAvailabilityRepo.findByDoctorId(id);
+        if(availability.isEmpty()){
+            throw new CustomException("No Availability exists with this Doctor Id");
+        }
+        List<DoctorAvailabilityDTO> availabilityDTO=availability.stream().map(doctorAvailabilityMapper::ToDTO).toList();
+        redisCacheService.setDoctorAvailabilityByTheirId(cacheKey, availabilityDTO);
+        return availabilityDTO;
     }
 }

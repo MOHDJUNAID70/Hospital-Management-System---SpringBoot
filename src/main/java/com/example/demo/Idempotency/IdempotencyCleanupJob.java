@@ -1,7 +1,7 @@
-package com.example.demo.Config;
+package com.example.demo.Idempotency;
 
 
-import com.example.demo.Repository.IdempotencyRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +16,8 @@ public class IdempotencyCleanupJob {
     @Autowired
     private IdempotencyRepo idempotencyRepo;
 
-    @Scheduled(cron = "0 0 20 * * *")
+    @Transactional
+    @Scheduled(cron = "0 */45 * * * *")
     public void cleanup() {
         idempotencyRepo.deleteByExpiresAtBefore(LocalDateTime.now());
     }

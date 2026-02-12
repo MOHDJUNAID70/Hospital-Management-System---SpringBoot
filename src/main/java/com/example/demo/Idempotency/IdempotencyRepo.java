@@ -1,7 +1,6 @@
-package com.example.demo.Repository;
+package com.example.demo.Idempotency;
 
 
-import com.example.demo.Model.IdempotencyKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

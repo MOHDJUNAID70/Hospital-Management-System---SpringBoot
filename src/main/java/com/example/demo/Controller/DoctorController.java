@@ -111,7 +111,7 @@ public class DoctorController {
     @Operation(summary = "Get Doctor's Timetable", description = "Doctor's Timetable by their ID")
     @GetMapping("/doctor/availability/{id}")
     public List<DoctorAvailabilityDTO> GetAvailabilityById(@PathVariable int id) {
-        return doctorAvailabilityRepo.findByDoctorId(id).stream().map(doctorAvailabilityMapper::ToDTO).toList();
+        return doctorAvailabilityService.getAvailabilityByDoctorId(id);
     }
 
     @DeleteMapping("/doctor/delete_availability_by_id")
