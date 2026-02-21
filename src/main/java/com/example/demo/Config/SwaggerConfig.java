@@ -27,6 +27,7 @@ public class SwaggerConfig {
                 List.of(
                         new Tag().name("Doctor APIs"),
                         new Tag().name("Patient APIs"),
+                        new Tag().name("Doctor Availability APIs"),
                         new Tag().name("Appointment APIs"),
                         new Tag().name("User APIs"),
                         new Tag().name("Appointment's Pagination APIs"),

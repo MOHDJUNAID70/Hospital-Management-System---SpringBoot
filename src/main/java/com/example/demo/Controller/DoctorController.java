@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,38 +91,6 @@ public class DoctorController {
     public ResponseEntity<String> deleteByExperienceInYears(@PathVariable int experience) {
         doctorService.deleteByExperienceInYears(experience);
         return new ResponseEntity<>("Doctor Info deleted with that Experience", HttpStatus.OK);
-    }
-
-//  set the doctors availability timetable
-    @PostMapping("doctor/set_availability")
-    public ResponseEntity<String> setAvailability(@Valid @RequestBody DoctorAvailability availability) {
-        doctorAvailabilityService.setAvailability(availability);
-        return new ResponseEntity<>("Doctor's Availability set", HttpStatus.OK);
-    }
-
-//    update the doctor's availability
-    @PostMapping("doctor/update_availability")
-    public ResponseEntity<String> updateDoctorAvailability(@RequestBody @Valid UpdateAvailabilityDTO request) {
-        doctorAvailabilityService.updateDoctorAvailability(request);
-        return new ResponseEntity<>("Doctor's Availability updated and " +
-                "the appointments have been cancelled which are before and after the time "+request.getStartTime()+" and "+ request.getEndTime(), HttpStatus.OK);
-    }
-
-    // get the doctor's timetable by their id
-    @Operation(summary = "Get Doctor's Timetable", description = "Doctor's Timetable by their ID")
-    @GetMapping("/doctor/availability/{id}")
-    public List<DoctorAvailabilityDTO> GetAvailabilityById(@PathVariable int id) {
-        return doctorAvailabilityService.getAvailabilityByDoctorId(id);
-    }
-
-    @DeleteMapping("/doctor/delete_availability_by_id")
-    public ResponseEntity<String> deleteAvailabilityById(@RequestParam int id) {
-        doctorAvailabilityRepo.deleteById(id);
-        return new ResponseEntity<>("Doctor's Availability deleted", HttpStatus.OK);
-    }
-    @GetMapping("doctor/availability")
-    public List<DoctorAvailability> getAvailabilityById() {
-        return doctorAvailabilityRepo.findAll();
     }
 
     @Operation(summary = "Update doctor's Profile", description = "update doctor's Info")

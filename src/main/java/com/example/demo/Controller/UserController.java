@@ -28,6 +28,11 @@ public class UserController {
         return userService.verify(user);
     }
 
+    @GetMapping("/get-user")
+    public ResponseEntity<Users> getUser(@RequestParam("id") int id){
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
+    }
+
     @DeleteMapping("/del")
     public ResponseEntity<String> delUser(@RequestParam int id) {
         userService.deluser(id);

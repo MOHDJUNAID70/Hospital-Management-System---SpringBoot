@@ -2,11 +2,13 @@ package com.example.demo.Controller;
 
 import com.example.demo.Model.Patient;
 import com.example.demo.Service.PatientService;
+import com.example.demo.Service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +20,21 @@ public class PatientController {
 
     @Autowired
     PatientService patientService;
+    @Autowired
+    private UserService userService;
 
-//    get all patient info
+    //    get all patient info
     @GetMapping("patient/info")
     public List<Patient> getAllPatients() {
         return patientService.getAllPatients();
     }
 
 //    Create Patient
+    @PreAuthorize("hasRole('Patient')")
     @PostMapping("patient/add")
     public ResponseEntity<String> addPatient(@Valid @RequestBody Patient patient) {
-        patientService.addPatient(patient);
+        userService.addPatient(patient);
+//        patientService.addPatient(patient);
         return new ResponseEntity<>("Your Registration has been done!!!", HttpStatus.CREATED);
     }
 

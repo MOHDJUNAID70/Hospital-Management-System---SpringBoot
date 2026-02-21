@@ -2,6 +2,10 @@ package com.example.demo.Repository;
 
 import com.example.demo.Enum.Gender;
 import com.example.demo.Model.Patient;
+import com.example.demo.Model.Users;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PatientRepo extends JpaRepository<Patient, Integer>, JpaSpecificationExecutor<Patient> {
@@ -26,4 +29,6 @@ public interface PatientRepo extends JpaRepository<Patient, Integer>, JpaSpecifi
 
     @Transactional
     List<Patient> findByAgeIsGreaterThanEqual(Integer age);
+
+    Patient findByNameAndUser(@NotBlank @Size(min = 3, max = 50) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must only contain alphabets and space") String name, Users user);
 }

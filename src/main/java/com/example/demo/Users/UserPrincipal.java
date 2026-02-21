@@ -1,5 +1,6 @@
-package com.example.demo.Model;
+package com.example.demo.Users;
 
+import com.example.demo.Model.Users;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,14 +10,15 @@ import java.util.List;
 
 public class UserPrincipal implements UserDetails {
 
-    private Users user;
+    private final Users user;
 
     public UserPrincipal(Users user) {
         this.user = user;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_"+user.getRole().name()));
     }
 
     @Override

@@ -32,4 +32,8 @@ public class Patient {
     @NotBlank
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must have 10 digits")
     private String phone;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user;
 }
