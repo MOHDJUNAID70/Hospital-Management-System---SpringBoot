@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        }
+        .register-container {
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+        }
+        .google-btn {
+            background: #fff;
+            color: #444;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+        .password-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .password-wrapper .input {
+            flex: 1;
+            padding-right: 2.5rem;
+        }
+        #togglePassword {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: -2.5rem;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            height: 2.5rem;
+            width: 2.5rem;
+            justify-content: center;
+        }
+        .eye-icon {
+            font-size: 1.5rem;
+            color: #888;
+            transition: color 0.2s;
+            user-select: none;
+            pointer-events: none;
+        }
+        #togglePassword:focus {
+            outline: none;
+        }
+        #togglePassword:hover .eye-icon {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <form class="form" th:action="@{/user/register}" method="post">
+        <h2 style="text-align:center; color:var(--primary); margin-bottom:1rem;">Register Yourself</h2>
+        <div th:if="${param.error}" class="alert error">Registration failed</div>
+        <div th:if="${param.success}" class="alert success">Registration successful</div>
+        <label for="email">Email</label>
+        <input class="input" id="email" name="email" type="email" placeholder="Enter email" required>
+        <label for="username">Username</label>
+        <input class="input" id="username" name="username" type="text" placeholder="Enter username" required>
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+            <input class="input" id="password" name="password" type="password" placeholder="Enter password" required>
+            <button type="button" id="togglePassword">
+                <span id="eyeIcon" class="eye-icon">&#128065;</span>
+            </button>
+        </div>
+        <script>
+            const passwordInput = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+            togglePassword.addEventListener('click', function () {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                eyeIcon.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{FE0E}'; // Simple eye icon
+            });
+        </script>
+        <label for="role">Role</label>
+        <select class="input" id="role" name="role" required>
+            <option value="">Select role</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Patient">Patient</option>
+        </select>
+        <button class="button" type="submit" style="margin-top:1rem;">Register</button>
+    </form>
+    <h3 style="text-align:center; color:var(--primary); margin-bottom:0.5rem; margin-top: 0.5rem;">Or</h3>
+    <button type="button" class="button google-btn" onclick="window.location.href='/oauth2/authorization/google'">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+        Sign up with Google
+    </button>
+</div>
+</body>
+</html>

@@ -14,10 +14,13 @@ import com.example.demo.Specification.UserSpecification;
 import com.example.demo.Users.CurrentUser;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,8 +59,11 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public void deluser(int id) {
+    @Transactional
+    public ResponseEntity<String> deluser(int id) {
+        Users user=userRepo.findById(id).orElseThrow(()-> new CustomException("User not exist with this Id"));
         userRepo.deleteById(id);
+        return new ResponseEntity<>("User deleted with Id "+id, HttpStatus.OK);
     }
 
     public String verify(Users user) {

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-user-doctor"></i>
+            <span>Doctor Portal</span>
+        </div>
+        <a th:href="@{/doctor/dashboard}">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+        </a>
+        <a th:href="@{/doctor/appointments}">
+            <i class="fa-solid fa-calendar-check"></i> My Appointments
+        </a>
+        <a th:href="@{/doctor/patients}">
+            <i class="fa-solid fa-bed"></i> My Patients
+        </a>
+        <a th:href="@{/doctor/prescriptions}">
+            <i class="fa-solid fa-prescription"></i> Prescriptions
+        </a>
+        <a th:href="@{/doctor/profile}">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+        <div class="profile-menu">
+            <i class="fa-solid fa-circle-user profile-icon" id="profileIcon"></i>
+            <div class="dropdown" id="profileDropdown">
+                <a th:href="@{/doctor/profile}">My Profile</a>
+                <a th:href="@{/settings}">Settings</a>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="content">
+        <h2>Doctor Dashboard</h2>
+        <div class="cards">
+            <div class="card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <h3>Today's Appointments</h3>
+                <p>8</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-bed"></i>
+                <h3>My Patients</h3>
+                <p>32</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-prescription"></i>
+                <h3>Prescriptions</h3>
+                <p>5 Today</p>
+            </div>
+        </div>
+        <div class="table-container" style="margin-bottom: 2rem;">
+            <h3>Today's Appointments</h3>
+            <table>
+                <tr>
+                    <th>Time</th>
+                    <th>Patient</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>09:00 AM</td>
+                    <td>Ali Khan</td>
+                    <td>Fever</td>
+                    <td class="status confirmed">Confirmed</td>
+                </tr>
+                <tr>
+                    <td>10:30 AM</td>
+                    <td>Rahul Verma</td>
+                    <td>Checkup</td>
+                    <td class="status pending">Pending</td>
+                </tr>
+            </table>
+        </div>
+        <div class="table-container" style="margin-bottom: 2rem;">
+            <h3>Patient History</h3>
+            <table>
+                <tr>
+                    <th>Patient</th>
+                    <th>Last Visit</th>
+                    <th>Diagnosis</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>Ali Khan</td>
+                    <td>10 Mar 2026</td>
+                    <td>Viral Fever</td>
+                    <td><button class="button">View</button></td>
+                </tr>
+                <tr>
+                    <td>Rahul Verma</td>
+                    <td>05 Mar 2026</td>
+                    <td>Diabetes</td>
+                    <td><button class="button">View</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="table-container">
+            <h3>Quick Prescription Entry</h3>
+            <form class="form">
+                <label for="patient">Patient</label>
+                <input class="input" id="patient" name="patient" type="text" placeholder="Enter patient name">
+                <label for="medicine">Medicine</label>
+                <input class="input" id="medicine" name="medicine" type="text" placeholder="Enter medicine">
+                <label for="notes">Notes</label>
+                <input class="input" id="notes" name="notes" type="text" placeholder="Enter notes">
+                <button class="button" type="submit">Add Prescription</button>
+            </form>
+        </div>
+    </main>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        const icon = document.getElementById("profileIcon");
+        const dropdown = document.getElementById("profileDropdown");
+        icon.addEventListener("click", function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("show");
+        });
+        document.addEventListener("click", function () {
+            dropdown.classList.remove("show");
+        });
+    });
+</script>
+</body>
+</html>

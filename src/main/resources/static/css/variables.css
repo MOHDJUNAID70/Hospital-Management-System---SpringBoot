@@ -1,0 +1,63 @@
+:root {
+    --primary: #000000;
+    --primary-light: #00c6ff;
+    --accent: #000000;
+    --bg: #f4f8fb;
+    --sidebar-bg: #232946;
+    --sidebar-hover: #394867;
+    --card-bg: #fff;
+    --text: #232946;
+    --text-light: #fff;
+    --border-radius: 8px;
+    --shadow: 0 4px 16px rgba(0,0,0,0.08);
+    --spacing-1: 8px;
+    --spacing-2: 16px;
+    --spacing-3: 24px;
+    --spacing-4: 32px;
+}
+
+.button {
+    background: linear-gradient(90deg, var(--primary-light) 0%, var(--primary) 100%);
+    color: var(--text-light);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.button:hover {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.form {
+    background: rgba(255,255,255,0.25);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-3) var(--spacing-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.input {
+    padding: var(--spacing-1);
+    border: none;
+    border-radius: var(--border-radius);
+    background: rgba(255,255,255,0.7);
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+.input:focus {
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-3) var(--spacing-2);
+    text-align: center;
+}

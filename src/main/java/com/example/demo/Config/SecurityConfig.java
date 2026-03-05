@@ -31,13 +31,36 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http) {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(request -> request
-            .requestMatchers("/user/reg", "/user/login").permitAll().anyRequest().authenticated())
+            .requestMatchers(
+                    "/",
+                    "/logins",
+                    "/register",
+                    "/user/reg",
+                    "/user/login",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/swagger-ui/index.html"
+            ).permitAll().anyRequest().authenticated())
+            .formLogin(form->form
+                .loginPage("/logins")
+                .loginProcessingUrl("/user/login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
+                )
             .oauth2Login(oauth -> oauth
-                    .defaultSuccessUrl("/swagger-ui/index.html", true))
+                    .loginPage("/logins")
+                    .defaultSuccessUrl("/", true))
+            .logout(
+                    logout -> logout
+                            .logoutUrl("/logout")
+                            .logoutSuccessUrl("/")
+                            .permitAll()
+            )
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))

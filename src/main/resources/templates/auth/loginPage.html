@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        }
+        .login-container {
+            width: 100%;
+            max-width: 370px;
+            margin: auto;
+        }
+        .google-btn {
+            background: #fff;
+            color: #444;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+        .login-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.97em;
+        }
+        .login-links a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .login-links a:hover {
+            text-decoration: underline;
+        }
+        .password-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .password-wrapper .input {
+            flex: 1;
+            padding-right: 2.5rem;
+        }
+        #togglePassword {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: -2.5rem;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            height: 2.5rem;
+            width: 2.5rem;
+            justify-content: center;
+        }
+        .eye-icon {
+            font-size: 1.2rem;
+            color: #888;
+            transition: color 0.2s;
+            user-select: none;
+            pointer-events: none;
+        }
+        #togglePassword:focus {
+            outline: none;
+        }
+        #togglePassword:hover .eye-icon {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <form class="form" th:action="@{/user/login}" method="post">
+        <h2 style="text-align:center; color:var(--primary); margin-bottom:1rem;">Login</h2>
+        <div th:if="${param.error}" class="alert error">Invalid credentials</div>
+        <label for="username">Email or Username</label>
+        <input class="input" id="username" name="username" type="text" placeholder="Enter email or username" required autofocus>
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+            <input class="input" id="password" name="password" type="password" placeholder="Enter password" required>
+            <button type="button" id="togglePassword">
+                <span id="eyeIcon" class="eye-icon">&#128065;</span>
+            </button>
+        </div>
+        <script>
+            const passwordInput = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+            togglePassword.addEventListener('click', function () {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                eyeIcon.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{FE0E}'; // Simple eye icon
+            });
+        </script>
+        <button class="button" type="submit" style="margin-top:1rem;">Login</button>
+        <h3 style="text-align:center; color:var(--primary); margin-bottom:0.5rem; margin-top: 0.5rem;">Or</h3>
+        <button type="button" class="button google-btn" onclick="window.location.href='/oauth2/authorization/google'">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+            Login with Google
+        </button>
+        <div class="login-links">
+            <a th:href="@{/forgot-password}">Forgot password?</a>
+            <a th:href="@{/register}">Don't have an account?</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

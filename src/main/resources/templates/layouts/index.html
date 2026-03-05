@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Hospital Management System</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <style>
+        body{
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const icon = document.getElementById("profileIcon");
+            const dropdown = document.getElementById("profileDropdown");
+            icon.addEventListener("click", function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle("show");
+            });
+            document.addEventListener("click", function () {
+                dropdown.classList.remove("show");
+            });
+        });
+    </script>
+</head>
+<body>
+<header>
+    Hospital Management System
+</header>
+<nav class="navbar">
+    <div class="nav-left">
+        <i class="fa-solid fa-hospital"></i>
+        <span>HMS Portal</span>
+    </div>
+    <div class="nav-center">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/doctor}">Departments</a>
+        <a th:href="@{/specialists}">Doctors</a>
+        <a th:href="@{/patients}">Patients</a>
+        <a th:href="@{/bookappointment}">Appointment</a>
+        <a th:href="@{/about}">About</a>
+        <a th:href="@{/logins}">Contact</a>
+    </div>
+    <div class="nav-right">
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/logins}" class="button">Login</a>
+        </div>
+        <div sec:authorize="isAuthenticated()" class="profile-menu">
+            <i class="fa-solid fa-circle-user profile-icon" id="profileIcon"></i>
+            <div class="dropdown" id="profileDropdown">
+                <a th:href="@{/profile}">My Profile</a>
+                <a th:href="@{/settings}">Settings</a>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="hero-section">
+    <div class="hero-text">
+        <h1>Welcome to Your Smart Hospital Dashboard</h1>
+        <p>
+            Experience the future of healthcare management.<br>
+            Effortlessly book appointments, manage patients and doctors, and access digital records—all in one place.<br>
+            <b>AI-powered, secure, and lightning fast.</b>
+        </p>
+    </div>
+    <div class="form-wrapper">
+        <form action="/bookappointment" method="post">
+            <h2>Book Appointment</h2>
+            <label>Select Doctor</label>
+            <input type="number" name="doctor.id" required>
+            <label>Select Patient</label>
+            <input type="number" name="patient.id" required>
+            <label>Appointment Date</label>
+            <input type="date" name="appointmentDate" required>
+            <label>Appointment Time</label>
+            <input type="time" name="appointmentTime" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+<footer>
+    &copy; 2023 Hospital Management System. All rights reserved.
+</footer>
+</body>
+</html>

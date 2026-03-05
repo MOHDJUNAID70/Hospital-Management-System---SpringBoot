@@ -22,9 +22,9 @@ public class PatientController {
     PatientService patientService;
     @Autowired
     private UserService userService;
-
     //    get all patient info
-    @GetMapping("patient/info")
+//    @PreAuthorize("hasRole('Admin')")
+    @GetMapping("/admin/patients-info")
     public List<Patient> getAllPatients() {
         return patientService.getAllPatients();
     }
