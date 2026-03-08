@@ -14,17 +14,15 @@
             <i class="fa-solid fa-hospital"></i>
             <span>HMS Portal</span>
         </div>
-        <a th:href="@{/}">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/admin/dashboard}">
             <i class="fa-solid fa-gauge"></i> Dashboard
         </a>
-        <a th:href="@{/patients}">
+        <a th:href="@{/admin/patients/info}">
             <i class="fa-solid fa-bed"></i> Patients
         </a>
-        <a th:href="@{/doctors}">
+        <a th:href="@{/admin/doctors/info}">
             <i class="fa-solid fa-user-doctor"></i> Doctors
-        </a>
-        <a th:href="@{/departments}">
-            <i class="fa-solid fa-building"></i> Departments
         </a>
         <a th:href="@{/templates/appointments}">
             <i class="fa-solid fa-calendar-check"></i> Appointments

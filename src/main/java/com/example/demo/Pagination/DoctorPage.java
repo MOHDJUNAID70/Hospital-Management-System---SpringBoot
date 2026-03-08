@@ -2,6 +2,7 @@ package com.example.demo.Pagination;
 
 import com.example.demo.Enum.DoctorSpecializations;
 import com.example.demo.Model.DTO.DoctorDTO;
+import com.example.demo.Model.Doctor;
 import com.example.demo.Service.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,8 +31,8 @@ public class DoctorPage {
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     @GetMapping("doctor/details")
-    public Page<DoctorDTO> GetAllDoctors(@RequestParam(required = false, defaultValue = "1") int pageNo,
-                                      @RequestParam(required = false, defaultValue = "4") int pageSize,
+    public Page<Doctor> GetAllDoctors(@RequestParam(required = false, defaultValue = "1") int pageNo,
+                                      @RequestParam(required = false, defaultValue = "10") int pageSize,
                                       @RequestParam(required = false, defaultValue = "id") String sortBy,
                                       @RequestParam(required = false) Integer StartExperienceInYears,
                                       @RequestParam(required = false) Integer EndExperienceInYears,

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Info</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .patient-table-wrapper {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 32px 24px;
+        }
+        .patient-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+        .filter-form {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-form input {
+            min-width: 120px;
+        }
+        .no-patients {
+            text-align: center;
+            color: #a94442;
+            font-size: 1.2rem;
+            margin: 32px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="patient-table-wrapper">
+    <div class="patient-title">
+        <i class="fa-solid fa-user-injured"></i> Patients Information
+    </div>
+    <form class="filter-form" method="get" th:action="@{/admin/patients/info}">
+        <input class="input" type="text" name="name" placeholder="Name" th:value="${name}">
+        <input class="input" type="text" name="address" placeholder="Address" th:value="${address}">
+        <input class="input" type="number" name="StartAge" placeholder="Start Age" th:value="${StartAge}">
+        <input class="input" type="number" name="EndAge" placeholder="End Age" th:value="${EndAge}">
+        <button class="button" type="submit"><i class="fa-solid fa-filter"></i> Filter</button>
+    </form>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="patient : ${patients.content}">
+            <td th:text="${patient.id}"></td>
+            <td th:text="${patient.name}"></td>
+            <td th:text="${patient.age}"></td>
+            <td th:text="${patient.gender}"></td>
+            <td th:text="${patient.address}"></td>
+            <td th:text="${patient.phone}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${#lists.isEmpty(patients.content)}" class="no-patients">
+        <i class="fa-solid fa-triangle-exclamation"></i> No patients found.
+    </div>
+    <div class="pagination" th:if="${patients.totalPages > 1}">
+        <a th:each="pageNum : ${#numbers.sequence(1, patients.totalPages)}"
+           th:href="@{'/admin/patients/info'(pageNo=${pageNum}, name=${name}, address=${address}, StartAge=${StartAge}, EndAge=${EndAge})}"
+           th:classappend="${patients.number + 1 == pageNum} ? 'page-link active' : 'page-link'"
+           th:text="${pageNum}"></a>
+    </div>
+</div>
+</body>
+</html>

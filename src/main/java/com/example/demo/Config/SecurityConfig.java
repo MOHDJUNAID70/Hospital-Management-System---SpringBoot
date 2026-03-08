@@ -2,8 +2,10 @@ package com.example.demo.Config;
 
 import com.example.demo.JWT.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,10 +20,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class SecurityConfig {
 
     @Autowired
@@ -29,6 +33,9 @@ public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Autowired
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) {
@@ -38,7 +45,7 @@ public class SecurityConfig {
             .requestMatchers(
                     "/",
                     "/logins",
-                    "/register",
+                    "/reg",
                     "/user/reg",
                     "/user/login",
                     "/css/**",
@@ -49,12 +56,12 @@ public class SecurityConfig {
             .formLogin(form->form
                 .loginPage("/logins")
                 .loginProcessingUrl("/user/login")
-                .defaultSuccessUrl("/", true)
+                .successHandler(customAuthenticationSuccessHandler)
                 .permitAll()
                 )
             .oauth2Login(oauth -> oauth
                     .loginPage("/logins")
-                    .defaultSuccessUrl("/", true))
+                    .successHandler(customAuthenticationSuccessHandler))
             .logout(
                     logout -> logout
                             .logoutUrl("/logout")

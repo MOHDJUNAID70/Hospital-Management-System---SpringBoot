@@ -11,19 +11,19 @@ public class DashboardController {
         return "layouts/index";
     }
 
-    @GetMapping("/specialists")
+    @GetMapping("/admin/dashboard")
     public String specialists() {
-        return "admin";
+        return "dashboard/admin";
     }
 
-    @GetMapping("/doctor")
+    @GetMapping("/doctor/dashboard")
     public String doctor() {
-        return "doctor";
+        return "dashboard/doctor";
     }
 
-    @GetMapping("/patients")
+    @GetMapping("/patient/dashboard")
     public String patients() {
-        return "patient";
+        return "dashboard/patient";
     }
 
     @GetMapping("/logins")
@@ -31,7 +31,7 @@ public class DashboardController {
         return "auth/loginPage";
     }
 
-    @GetMapping("/register")
+    @GetMapping("/reg")
     public String registerPage() {
         return "auth/register";
     }

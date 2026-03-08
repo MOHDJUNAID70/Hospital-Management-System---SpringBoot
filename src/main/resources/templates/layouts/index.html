@@ -51,7 +51,9 @@
         <div sec:authorize="isAuthenticated()" class="profile-menu">
             <i class="fa-solid fa-circle-user profile-icon" id="profileIcon"></i>
             <div class="dropdown" id="profileDropdown">
-                <a th:href="@{/profile}">My Profile</a>
+                <a th:if="${#authorization.expression('hasRole(''Doctor'')')}" th:href="@{/doctor/dashboard}">My Profile</a>
+                <a th:if="${#authorization.expression('hasRole(''Admin'')')}" th:href="@{/admin/dashboard}">My Profile</a>
+                <a th:if="${#authorization.expression('hasRole(''Patient'')')}" th:href="@{/patient/dashboard}">My Profile</a>
                 <a th:href="@{/settings}">Settings</a>
                 <a th:href="@{/logout}">Logout</a>
             </div>

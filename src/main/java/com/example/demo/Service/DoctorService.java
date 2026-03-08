@@ -77,10 +77,10 @@ public class DoctorService {
         return doctor;
     }
 
-    public Page<DoctorDTO> fetchAll(Pageable pageable, Integer StartExperienceInYears, Integer endExperienceInYears, String name,
+    public Page<Doctor> fetchAll(Pageable pageable, Integer StartExperienceInYears, Integer endExperienceInYears, String name,
                                     DoctorSpecializations specializations) {
         Specification<Doctor> spec= DoctorSpecification.getSpecification(StartExperienceInYears, endExperienceInYears, name, specializations);
-        return doctorRepo.findAll(spec, pageable).map(doctorMapper::ToDTO);
+        return doctorRepo.findAll(spec, pageable);
     }
 
     @Transactional

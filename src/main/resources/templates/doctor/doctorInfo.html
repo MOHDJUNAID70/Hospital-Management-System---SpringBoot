@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctors Information</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
+        .doctor-layout {
+            display: flex;
+            min-height: 100vh;
+            background: none;
+        }
+        .doctor-sidebar {
+            min-width: 240px;
+            max-width: 260px;
+            background: linear-gradient(180deg, #e3e9f7 0%, #f8fafd 100%);
+            border-radius: 24px 0 0 24px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.10);
+            padding: 36px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 10;
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #232946;
+            margin-bottom: 38px;
+            letter-spacing: 1px;
+        }
+        .sidebar-header i {
+            color: #00c6ff;
+            font-size: 1.7rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #232946;
+            background: transparent;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            width: 100%;
+        }
+        .sidebar-link.active, .sidebar-link:hover {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+        }
+        .sidebar-link i {
+            font-size: 1.2rem;
+            color: #00c6ff;
+            transition: color 0.2s;
+        }
+        .sidebar-link.active i, .sidebar-link:hover i {
+            color: #fff;
+        }
+        .profile-menu {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+        .profile-icon {
+            font-size: 2.2rem;
+            color: #00c6ff;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: color 0.2s;
+        }
+        .profile-icon:hover {
+            color: #232946;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            min-width: 160px;
+            padding: 10px 0;
+            z-index: 200;
+        }
+        .profile-menu:hover .dropdown, .profile-icon:focus + .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: #232946;
+            text-decoration: none;
+            font-size: 1.08rem;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .dropdown a:hover {
+            background: #e3e9f7;
+            color: #00c6ff;
+        }
+        .doctor-main-content {
+            flex: 1;
+            padding: 0 0 0 0;
+            background: none;
+            min-width: 0;
+        }
+        .doctor-table-wrapper {
+            max-width: 1200px;
+            margin: 48px auto 0 auto;
+            background: rgba(255,255,255,0.98);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.10);
+            padding: 40px 32px 32px 32px;
+            position: relative;
+        }
+        .doctor-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 32px;
+            color: #232946;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0,198,255,0.08);
+        }
+        .doctor-filter-section {
+            background: linear-gradient(90deg, #f8fafd 0%, #e3e9f7 100%);
+            border-radius: 32px;
+            box-shadow: 0 2px 16px rgba(0,198,255,0.10);
+            padding: 0;
+            margin-bottom: 32px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            border: none;
+        }
+        .doctor-filter-bar {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px 18px 32px;
+            gap: 18px;
+            background: none;
+        }
+        .doctor-filter-col {
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+            max-width: 220px;
+            flex: 1 1 0;
+            margin-bottom: 0;
+        }
+        .doctor-filter-label {
+            font-weight: 600;
+            color: #232946;
+            margin-bottom: 6px;
+            font-size: 1.05rem;
+            letter-spacing: 0.2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .doctor-filter-input {
+            border: 2px solid #e0e6f7;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 1.08rem;
+            background: #fff;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px rgba(0,198,255,0.04);
+            min-width: 0;
+        }
+        .doctor-filter-input:focus {
+            border: 2px solid #00c6ff;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0,198,255,0.10);
+        }
+        .doctor-filter-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 10px;
+            min-width: 180px;
+            max-width: 220px;
+            margin-bottom: 0;
+            flex: 0 0 auto;
+        }
+        .doctor-filter-btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 1.08rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            margin-bottom: 0;
+            box-shadow: 0 2px 8px rgba(0,198,255,0.07);
+        }
+        .doctor-filter-search {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+            border: none;
+        }
+        .doctor-filter-search:hover {
+            background: linear-gradient(90deg, #232946 0%, #00c6ff 100%);
+            color: #fff;
+        }
+        .doctor-filter-clear {
+            background: #fafdff;
+            color: #232946;
+            border: 2px solid #bbb;
+        }
+        .doctor-filter-clear:hover {
+            background: #e0e6f7;
+            color: #00c6ff;
+        }
+        .add-btn {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 10px;
+            font-size: 1.08rem;
+            padding: 10px 26px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(0,198,255,0.10);
+            border: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .add-btn:hover {
+            background: linear-gradient(90deg, #232946 0%, #00c6ff 100%);
+            color: #fff;
+        }
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+        .table th {
+            background: #e3e9f7;
+            color: #232946;
+            font-weight: 700;
+            font-size: 1.08rem;
+            padding: 14px 10px;
+            border-radius: 8px 8px 0 0;
+            text-align: left;
+        }
+        .table td {
+            background: #fff;
+            color: #232946;
+            font-size: 1.05rem;
+            padding: 14px 10px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 8px rgba(0,198,255,0.04);
+            vertical-align: middle;
+        }
+        .table tr {
+            transition: box-shadow 0.2s;
+        }
+        .table tr:hover td {
+            box-shadow: 0 4px 16px rgba(0,198,255,0.10);
+            background: #fafdff;
+        }
+        .table th:last-child, .table td:last-child {
+            text-align: center;
+        }
+        .doctor-filter-btn, .add-btn {
+            box-shadow: 0 2px 8px rgba(0,198,255,0.07);
+        }
+        .modal-content {
+            border-radius: 18px !important;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.18) !important;
+        }
+        .modal-content h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #232946;
+        }
+        .modal-content label {
+            font-weight: 700;
+            color: #232946;
+        }
+        .modal-content input, .modal-content select {
+            border-radius: 8px;
+            border: 2px solid #e0e6f7;
+            padding: 8px 12px;
+            font-size: 1.08rem;
+            background: #fafdff;
+            margin-top: 4px;
+        }
+        .modal-content input:focus, .modal-content select:focus {
+            border: 2px solid #00c6ff;
+            outline: none;
+        }
+        .modal-content button {
+            margin-top: 10px;
+        }
+        .no-doctors {
+            text-align: center;
+            color: #a94442;
+            font-size: 1.2rem;
+            margin: 32px 0;
+        }
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .doctor-filter-bar {
+                flex-wrap: wrap;
+                gap: 12px;
+                padding: 18px 12px 12px 12px;
+            }
+            .doctor-filter-col {
+                min-width: 140px;
+                max-width: 180px;
+            }
+            .doctor-filter-actions {
+                min-width: 120px;
+                max-width: 180px;
+            }
+        }
+        @media (max-width: 900px) {
+            .doctor-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 4vw 8px 4vw;
+            }
+            .doctor-filter-col, .doctor-filter-actions {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 600px) {
+            .doctor-filter-bar {
+                padding: 8px 2vw 8px 2vw;
+            }
+            .doctor-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="doctor-layout">
+    <aside class="doctor-sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-hospital"></i>
+            <span>HMS Portal</span>
+        </div>
+        <a th:href="@{/}" class="sidebar-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+        <a th:href="@{/admin/dashboard}" class="sidebar-link"><i class="fa-solid fa-gauge"></i> <span>Dashboard</span></a>
+        <a th:href="@{/admin/patients/info}" class="sidebar-link"><i class="fa-solid fa-bed"></i> <span>Patients</span></a>
+        <a th:href="@{/admin/doctors/info}" class="sidebar-link active"><i class="fa-solid fa-user-doctor"></i> <span>Doctors</span></a>
+        <a th:href="@{/templates/appointments}" class="sidebar-link"><i class="fa-solid fa-calendar-check"></i> <span>Appointments</span></a>
+        <a th:href="@{/templates/billing}" class="sidebar-link"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Billing</span></a>
+        <a th:href="@{/reports}" class="sidebar-link"><i class="fa-solid fa-chart-line"></i> <span>Reports</span></a>
+    </aside>
+    <main class="doctor-main-content">
+        <div class="doctor-table-wrapper">
+            <div class="doctor-title">
+                <i class="fa-solid fa-user-doctor"></i> Doctors Information
+            </div>
+            <div class="doctor-filter-section" style="margin:0 0 32px 0;">
+                <form method="get" th:action="@{/admin/doctors/info}" class="doctor-filter-bar">
+                    <div class="doctor-filter-col">
+                        <label class="doctor-filter-label" for="doctorName"><i class="fa-solid fa-user-md"></i> Name</label>
+                        <input class="doctor-filter-input" id="doctorName" type="text" name="name" placeholder="Search by name..." th:value="${name}" />
+                    </div>
+                    <div class="doctor-filter-col">
+                        <label class="doctor-filter-label" for="doctorSpecialization"><i class="fa-solid fa-stethoscope"></i> Specialization</label>
+                        <select class="doctor-filter-input" id="doctorSpecialization" name="specialization">
+                            <option value="">All Specializations</option>
+                            <option value="CARDIOLOGIST" th:selected="${specialization} == 'CARDIOLOGIST'">Cardiologist</option>
+                            <option value="DENTIST" th:selected="${specialization} == 'DENTIST'">Dentist</option>
+                            <option value="NEUROLOGIST" th:selected="${specialization} == 'NEUROLOGIST'">Neurologist</option>
+                            <option value="ORTHOPEDIC" th:selected="${specialization} == 'ORTHOPEDIC'">Orthopedic</option>
+                            <option value="GENERAL_PHYSICIAN" th:selected="${specialization} == 'GENERAL_PHYSICIAN'">General Physician</option>
+                            <option value="DERMATOLOGIST" th:selected="${specialization} == 'DERMATOLOGIST'">Dermatologist</option>
+                            <option value="HEART_SPECIALIST" th:selected="${specialization} == 'HEART_SPECIALIST'">Heart Specialist</option>
+                        </select>
+                    </div>
+                    <div class="doctor-filter-col">
+                        <label class="doctor-filter-label" for="minExperience"><i class="fa-solid fa-hourglass-start"></i> Min Exp</label>
+                        <input class="doctor-filter-input" id="minExperience" type="number" name="minExperience" placeholder="Min" th:value="${minExperience}" min="0" />
+                    </div>
+                    <div class="doctor-filter-col">
+                        <label class="doctor-filter-label" for="maxExperience"><i class="fa-solid fa-hourglass-end"></i> Max Exp</label>
+                        <input class="doctor-filter-input" id="maxExperience" type="number" name="maxExperience" placeholder="Max" th:value="${maxExperience}" min="0" />
+                    </div>
+                    <div class="doctor-filter-actions">
+                        <button type="submit" class="doctor-filter-btn doctor-filter-search"><i class="fa-solid fa-filter"></i> Filter</button>
+                        <a th:href="@{/admin/doctors/info}" class="doctor-filter-btn doctor-filter-clear"><i class="fas fa-undo"></i> Clear</a>
+                    </div>
+                </form>
+            </div>
+            <!-- Add New Doctor Button and Modal -->
+            <div style="display:flex;justify-content:flex-end;margin-bottom:18px;">
+                <button id="addDoctorBtn" class="doctor-filter-btn doctor-filter-search add-btn" style="font-size:1rem;padding:8px 22px;border-radius:8px;">
+                    <i class="fa-solid fa-user-plus"></i> Add New Doctor
+                </button>
+            </div>
+            <div id="addDoctorModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(44,62,80,0.18);align-items:center;justify-content:center;">
+                <div class="modal-content" style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(44,62,80,0.18);padding:32px 28px;max-width:420px;width:95%;position:relative;">
+                    <span id="closeModal" style="position:absolute;top:18px;right:22px;font-size:1.5rem;cursor:pointer;color:#232946;opacity:0.7;">&times;</span>
+                    <h3 style="text-align:center;color:#232946;font-weight:700;margin-bottom:18px;">
+                        <i class="fa-solid fa-user-plus" style="color:#00c6ff;"></i> Add New Doctor
+                    </h3>
+                    <form method="post" th:action="@{/admin/doctors/add}" id="addDoctorForm">
+                        <div style="margin-bottom:14px;">
+                            <label for="doctorNameInput" style="font-weight:600;">Name</label>
+                            <input type="text" id="doctorNameInput" name="name" class="doctor-filter-input" placeholder="Doctor Name" required />
+                        </div>
+                        <div style="margin-bottom:14px;">
+                            <label for="doctorGenderInput" style="font-weight:600;">Gender</label>
+                            <select id="doctorGenderInput" name="gender" class="doctor-filter-input" required>
+                                <option value="">Select Gender</option>
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:14px;">
+                            <label for="doctorSpecializationInput" style="font-weight:600;">Specialization</label>
+                            <select id="doctorSpecializationInput" name="specialization" class="doctor-filter-input" required>
+                                <option value="">Select Specialization</option>
+                                <option value="CARDIOLOGIST">Cardiologist</option>
+                                <option value="DENTIST">Dentist</option>
+                                <option value="NEUROLOGIST">Neurologist</option>
+                                <option value="ORTHOPEDIC">Orthopedic</option>
+                                <option value="GENERAL_PHYSICIAN">General Physician</option>
+                                <option value="DERMATOLOGIST">Dermatologist</option>
+                                <option value="HEART_SPECIALIST">Heart Specialist</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:18px;">
+                            <label for="doctorExperienceInput" style="font-weight:600;">Experience (Years)</label>
+                            <input type="number" id="doctorExperienceInput" name="experienceInYears" class="doctor-filter-input" placeholder="Experience" min="0" required />
+                        </div>
+                        <div style="text-align:center;">
+                            <button type="submit" class="doctor-filter-btn doctor-filter-search" style="width:100%;font-size:1.1rem;">
+                                <i class="fa-solid fa-plus"></i> Add Doctor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <script>
+                const addDoctorBtn = document.getElementById('addDoctorBtn');
+                const addDoctorModal = document.getElementById('addDoctorModal');
+                const closeModal = document.getElementById('closeModal');
+                addDoctorBtn.onclick = function() { addDoctorModal.style.display = 'flex'; };
+                closeModal.onclick = function() { addDoctorModal.style.display = 'none'; };
+                window.onclick = function(event) {
+                    if (event.target === addDoctorModal) addDoctorModal.style.display = 'none';
+                };
+            </script>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Doctor ID</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Specialization</th>
+                    <th>Experience (Years)</th>
+                    <th style="text-align:center;">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="doctor : ${doctors.content}">
+                    <td th:text="${doctor.id}"></td>
+                    <td th:text="${doctor.name}"></td>
+                    <td th:text="${doctor.gender}"></td>
+                    <td th:text="${doctor.specialization}"></td>
+                    <td th:text="${doctor.experienceInYears}"></td>
+                    <td style="text-align:center;">
+                        <!-- Doctor Table Row Actions -->
+                        <button class="btn btn-outline-primary btn-sm me-2" title="View Availability"
+                                th:onclick="|window.location.href='/admin/doctors/' + ${doctor.id} + '/availability'|">
+                            <i class="fas fa-calendar-alt"></i> View Availability
+                        </button>
+                        <button type="button" class="doctor-filter-btn doctor-filter-search" style="padding:4px 12px;font-size:0.98rem;margin-right:6px;" th:attr="data-id=${doctor.id},data-name=${doctor.name},data-gender=${doctor.gender},data-specialization=${doctor.specialization},data-experience=${doctor.experienceInYears}" onclick="openEditDoctorModal(this)">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <form th:action="@{'/admin/doctors/delete/' + ${doctor.id}}" method="post" style="display:inline;">
+                            <button type="submit" class="doctor-filter-btn doctor-filter-clear" style="padding:4px 12px;font-size:0.98rem;" onclick="return confirm('Are you sure you want to delete this doctor?');">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- Edit Doctor Modal -->
+            <div id="editDoctorModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(44,62,80,0.18);align-items:center;justify-content:center;">
+                <div class="modal-content" style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(44,62,80,0.18);padding:32px 28px;max-width:420px;width:95%;position:relative;">
+                    <span id="closeEditModal" style="position:absolute;top:18px;right:22px;font-size:1.5rem;cursor:pointer;color:#232946;opacity:0.7;">&times;</span>
+                    <h3 style="text-align:center;color:#232946;font-weight:700;margin-bottom:18px;">
+                        <i class="fa-solid fa-user-pen" style="color:#00c6ff;"></i> Edit Doctor
+                    </h3>
+                    <form method="post" th:action="@{/admin/doctors/edit}" id="editDoctorForm">
+                        <input type="hidden" id="editDoctorId" name="id" />
+                        <div style="margin-bottom:14px;">
+                            <label for="editDoctorNameInput" style="font-weight:600;">Name</label>
+                            <input type="text" id="editDoctorNameInput" name="name" class="doctor-filter-input" placeholder="Doctor Name" required />
+                        </div>
+                        <div style="margin-bottom:14px;">
+                            <label for="editDoctorGenderInput" style="font-weight:600;">Gender</label>
+                            <select id="editDoctorGenderInput" name="gender" class="doctor-filter-input" required>
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:14px;">
+                            <label for="editDoctorSpecializationInput" style="font-weight:600;">Specialization</label>
+                            <select id="editDoctorSpecializationInput" name="specialization" class="doctor-filter-input" required>
+                                <option value="CARDIOLOGIST">Cardiologist</option>
+                                <option value="DENTIST">Dentist</option>
+                                <option value="NEUROLOGIST">Neurologist</option>
+                                <option value="ORTHOPEDIC">Orthopedic</option>
+                                <option value="GENERAL_PHYSICIAN">General Physician</option>
+                                <option value="DERMATOLOGIST">Dermatologist</option>
+                                <option value="HEART_SPECIALIST">Heart Specialist</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom:18px;">
+                            <label for="editDoctorExperienceInput" style="font-weight:600;">Experience (Years)</label>
+                            <input type="number" id="editDoctorExperienceInput" name="experienceInYears" class="doctor-filter-input" placeholder="Experience" min="0" required />
+                        </div>
+                        <div style="text-align:center;">
+                            <button type="submit" class="doctor-filter-btn doctor-filter-search" style="width:100%;font-size:1.1rem;">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <script>
+                function openEditDoctorModal(btn) {
+                    document.getElementById('editDoctorId').value = btn.getAttribute('data-id');
+                    document.getElementById('editDoctorNameInput').value = btn.getAttribute('data-name');
+                    document.getElementById('editDoctorGenderInput').value = btn.getAttribute('data-gender');
+                    document.getElementById('editDoctorSpecializationInput').value = btn.getAttribute('data-specialization');
+                    document.getElementById('editDoctorExperienceInput').value = btn.getAttribute('data-experience');
+                    document.getElementById('editDoctorModal').style.display = 'flex';
+                }
+                document.getElementById('closeEditModal').onclick = function() {
+                    document.getElementById('editDoctorModal').style.display = 'none';
+                };
+                window.onclick = function(event) {
+                    if (event.target === document.getElementById('addDoctorModal')) document.getElementById('addDoctorModal').style.display = 'none';
+                    if (event.target === document.getElementById('editDoctorModal')) document.getElementById('editDoctorModal').style.display = 'none';
+                };
+            </script>
+            <div th:if="${#lists.isEmpty(doctors.content)}" class="no-doctors">
+                <i class="fa-solid fa-triangle-exclamation"></i> No doctors found.
+            </div>
+            <div class="pagination" th:if="${doctors.totalPages > 1}">
+                <a class="page-link" th:if="${doctors.number > 0}"
+                   th:href="@{'/admin/doctors/info'(pageNo=${doctors.number}, name=${name}, specialization=${specialization}, minExperience=${minExperience}, maxExperience=${maxExperience})}">
+                    <i class="fa fa-angle-left"></i> Previous
+                </a>
+                <span class="page-link disabled" th:if="${doctors.number == 0}" style="pointer-events:none;opacity:0.5;">
+                    <i class="fa fa-angle-left"></i> Previous
+                </span>
+                <a th:each="pageNum : ${#numbers.sequence(1, doctors.totalPages)}"
+                   th:href="@{'/admin/doctors/info'(pageNo=${pageNum}, name=${name}, specialization=${specialization}, minExperience=${minExperience}, maxExperience=${maxExperience})}"
+                   th:classappend="${doctors.number + 1 == pageNum} ? 'page-link active' : 'page-link'"
+                   th:text="${pageNum}"></a>
+                <a class="page-link" th:if="${doctors.number + 1 < doctors.totalPages}"
+                   th:href="@{'/admin/doctors/info'(pageNo=${doctors.number + 2}, name=${name}, specialization=${specialization}, minExperience=${minExperience}, maxExperience=${maxExperience})}">
+                    Next <i class="fa fa-angle-right"></i>
+                </a>
+                <span class="page-link disabled" th:if="${doctors.number + 1 == doctors.totalPages}" style="pointer-events:none;opacity:0.5;">
+                    Next <i class="fa fa-angle-right"></i>
+                </span>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -33,19 +33,14 @@ public class AppointmentPage {
     @GetMapping("appointment/details")
     public Page<AppointmentDTO> getAppointments(
             @RequestParam(required = false, defaultValue = "1") int pageNo,
-            @RequestParam(required = false, defaultValue = "4") int pageSize,
+            @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestParam(required = false, defaultValue = "appointmentDate") String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortDirection,
             @RequestParam(required = false) LocalDate appointmentDate,
             @RequestParam(required = false) AppointmentStatus status,
             @RequestParam(required = false) LocalTime appointmentStartTime,
             @RequestParam(required = false) LocalTime appointmentEndTime
             ){
-        Sort sort=null;
-        if(sortDirection.equalsIgnoreCase("asc")){
-            sort=Sort.by(sortBy).ascending();
-        }
-        else sort=Sort.by(sortBy).descending();
+        Sort sort=Sort.by(sortBy).ascending();
         Pageable pageable=PageRequest.of(pageNo-1,pageSize,sort);
         return appointmentService.fetchAll(pageable, appointmentDate, status, appointmentStartTime, appointmentEndTime);
     }

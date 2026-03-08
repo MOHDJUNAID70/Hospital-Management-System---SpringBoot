@@ -6,6 +6,7 @@ import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.DoctorAvailabilityMapper;
 import com.example.demo.Model.Appointment;
 import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
+import com.example.demo.Model.DTO.SetDoctorAvailabilityDTO;
 import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Model.DoctorAvailability;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -41,15 +43,16 @@ public class DoctorAvailabilityService {
     private RedisCacheService redisCacheService;
 
     @Transactional
-    public void setAvailability(@Valid DoctorAvailability availability) {
-        Doctor doctor = doctorRepo.findById(availability.getDoctor().getId()).orElseThrow(()-> new RuntimeException("doctor not found"));
-        availability.setDoctor(doctor);
-        availability.setWorkingDay(availability.getWorkingDay());
-        availability.setStartTime(availability.getStartTime());
-        availability.setEndTime(availability.getEndTime());
-        doctorAvailabilityRepo.save(availability);
+    public void setAvailability(SetDoctorAvailabilityDTO availability) {
+        Doctor doctor=doctorRepo.findById(availability.getId())
+                .orElseThrow(()-> new RuntimeException("doctor not found"));
+        DoctorAvailability doctorAvailability = new DoctorAvailability();
+        doctorAvailability.setDoctor(doctor);
+        doctorAvailability.setWorkingDay(availability.getWorkingDay());
+        doctorAvailability.setStartTime(availability.getStartTime());
+        doctorAvailability.setEndTime(availability.getEndTime());
+        doctorAvailabilityRepo.save(doctorAvailability);
     }
-
 
     public void updateDoctorAvailability(@Valid UpdateAvailabilityDTO request) {
         DoctorAvailability availability=doctorAvailabilityRepo.findById(request.getId())
@@ -92,17 +95,17 @@ public class DoctorAvailabilityService {
     }
 
     public List<DoctorAvailabilityDTO> getAvailabilityByDoctorId(int id) {
-        String cacheKey=String.valueOf(id);
-        List<DoctorAvailabilityDTO> cached=redisCacheService.getDoctorAvailabilityByTheirId(cacheKey);
-        if(cached!=null){
-            return cached;
-        }
+//        String cacheKey=String.valueOf(id);
+//        List<DoctorAvailabilityDTO> cached=redisCacheService.getDoctorAvailabilityByTheirId(cacheKey);
+//        if(cached!=null){
+//            return cached;
+//        }
         List<DoctorAvailability> availability=doctorAvailabilityRepo.findByDoctorId(id);
         if(availability.isEmpty()){
             throw new CustomException("No Availability exists with this Doctor Id");
         }
         List<DoctorAvailabilityDTO> availabilityDTO=availability.stream().map(doctorAvailabilityMapper::ToDTO).toList();
-        redisCacheService.setDoctorAvailabilityByTheirId(cacheKey, availabilityDTO);
+//        redisCacheService.setDoctorAvailabilityByTheirId(cacheKey, availabilityDTO);
         return availabilityDTO;
     }
 }

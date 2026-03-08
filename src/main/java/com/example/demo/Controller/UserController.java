@@ -12,28 +12,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("user")
+@RestController
+@RequestMapping("users")
 @Tag(name = "User APIs")
 public class UserController {
     @Autowired
     private UserService userService;
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute UserRegistrationDTO userRegistrationDTO) {
+    public ResponseEntity<String> register(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO) {
         userService.register(userRegistrationDTO);
-        return "redirect:/logins";
+        return new ResponseEntity<>("Registration Successfully",HttpStatus.OK);
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Users user, HttpSession session){
-        String result =userService.verify(user);
-        if(result.equals("Login Successful")){
-            session.setAttribute("user", user.getUsername());
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
-        }
+        userService.verify(user);
+        return new ResponseEntity<>("Login Successful", HttpStatus.OK);
     }
 
     @GetMapping("/get-user")

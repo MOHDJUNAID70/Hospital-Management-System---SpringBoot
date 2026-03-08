@@ -26,8 +26,11 @@ public class DoctorSpecification {
                             criteriaBuilder.lessThanOrEqualTo(root.get("experienceInYears"), endExperienceInYears)
                     ));
                 }
-                if(name != null) {
-                    predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + name + "%"));
+                if(name != null && !name.trim().isEmpty()) {
+                    predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("name")),
+                        "%" + name.toLowerCase() + "%"
+                    ));
                 }
                 if(specializations != null) {
                     predicates.add(criteriaBuilder.equal(root.get("specialization"), specializations));

@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
+import com.example.demo.Model.DTO.SetDoctorAvailabilityDTO;
 import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
 import com.example.demo.Model.DoctorAvailability;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
@@ -26,8 +27,8 @@ public class DoctorAvailabilityController {
     private DoctorAvailabilityRepo doctorAvailabilityRepo;
 
     //  set the doctors availability timetable
-    @PostMapping("doctor/set_availability")
-    public ResponseEntity<String> setAvailability(@Valid @RequestBody DoctorAvailability availability) {
+    @PostMapping("/doctor/set_availability")
+    public ResponseEntity<String> setAvailability(@RequestBody SetDoctorAvailabilityDTO availability) {
         doctorAvailabilityService.setAvailability(availability);
         return new ResponseEntity<>("Doctor's Availability set", HttpStatus.OK);
     }

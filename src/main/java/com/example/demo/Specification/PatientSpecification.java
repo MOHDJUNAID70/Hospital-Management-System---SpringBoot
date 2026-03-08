@@ -1,5 +1,6 @@
 package com.example.demo.Specification;
 
+import com.example.demo.Model.DTO.PatientDTO;
 import com.example.demo.Model.Patient;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

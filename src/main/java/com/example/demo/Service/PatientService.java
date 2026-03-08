@@ -69,10 +69,10 @@ public class PatientService {
 
     public Page<PatientDTO> fetchAll(Pageable pageable, String name, String address, Integer StartAge, Integer EndAge) {
         Specification<Patient> spec= PatientSpecification.getSpecification(name, address, StartAge, EndAge);
-        List<Patient> patients=patientRepo.findAll(spec);
-        if(patients.isEmpty()){
-            throw new CustomException("No such patient exists with given criteria");
-        }
+//        List<Patient> patients=patientRepo.findAll(spec);
+//        if(patients.isEmpty()){
+//            throw new CustomException("No such patient exists with given criteria");
+//        }
         return patientRepo.findAll(spec, pageable).map(patientMapper::ToDTO);
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Patient Dashboard</title>
@@ -33,6 +33,7 @@
         <a th:href="@{/patient/profile}">
             <i class="fa-solid fa-user"></i> Profile
         </a>
+        <a th:href="@{/logout}">Logout</a>
         <div class="profile-menu">
             <i class="fa-solid fa-circle-user profile-icon" id="profileIcon"></i>
             <div class="dropdown" id="profileDropdown">

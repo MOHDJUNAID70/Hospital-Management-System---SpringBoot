@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Availability</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body{
+            background:linear-gradient(120deg,#e0eafc 0%,#cfdef3 100%);
+            min-height:100vh;
+            font-family:'Segoe UI','Roboto',Arial,sans-serif;
+        }
+        .availability-container{
+            max-width:700px;
+            margin:48px auto;
+            background:#fff;
+            border-radius:24px;
+            box-shadow:0 8px 32px rgba(44,62,80,0.1);
+            padding:40px 32px;
+        }
+        .availability-title{
+            text-align:center;
+            font-size:2rem;
+            font-weight:700;
+            margin-bottom:30px;
+        }
+        .table{
+            width:100%;
+            border-collapse:separate;
+            border-spacing:0 12px;
+        }
+        .table th{
+            background:#e3e9f7;
+            padding:12px;
+        }
+        .table td{
+            background:#fff;
+            padding:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+        }
+        #updateModal, #addModal{
+            display:none;
+            position:fixed;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.2);
+            align-items:center;
+            justify-content:center;
+        }
+        .modal-content{
+            background:#fff;
+            border-radius:16px;
+            padding:30px;
+            width:380px;
+            position:relative;
+        }
+        #closeUpdateModal, #closeAddModal{
+            position:absolute;
+            right:15px;
+            top:10px;
+            cursor:pointer;
+            font-size:22px;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            color: white;
+        }
+        .doctor-filter-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .doctor-filter-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .doctor-filter-btn:hover {
+            background-color: #0056b3;
+        }
+        .no-data-row td {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="availability-container">
+    <div class="availability-title">
+        <i class="fa-solid fa-calendar-check"></i> Doctor Availability
+    </div>
+    <!-- Error message block -->
+    <div th:if="${errorMessage}" class="alert alert-warning" th:text="${errorMessage}" style="margin-bottom:18px; background:#fff3cd; border:1px solid #ffc107; padding:12px; border-radius:8px; text-align:center;"></div>
+    <button class="btn btn-success mb-3" style="float:right; margin-bottom:18px;" type="button" onclick="openAddModal()">
+        <i class="fa-solid fa-plus"></i> Add Availability
+    </button>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Day</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(availabilities)}" class="no-data-row">
+            <td colspan="4">No Data Exist</td>
+        </tr>
+        <tr th:each="availability : ${availabilities}">
+            <td th:text="${availability.workingDay}"></td>
+            <td th:text="${#temporals.format(availability.startTime,'hh:mm a')}"></td>
+            <td th:text="${#temporals.format(availability.endTime,'hh:mm a')}"></td>
+            <td>
+                <button class="update-btn btn btn-outline-primary btn-sm"
+                        th:data-id="${availability.id}"
+                        th:data-day="${availability.workingDay}"
+                        th:data-start="${#temporals.format(availability.startTime,'HH:mm')}"
+                        th:data-end="${#temporals.format(availability.endTime,'HH:mm')}">
+                    <i class="fa-solid fa-pen-to-square"></i> Update
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- Update Modal -->
+<div th:if="${!#lists.isEmpty(availabilities)}">
+    <div id="updateModal">
+        <div class="modal-content">
+            <span id="closeUpdateModal">&times;</span>
+            <h3 style="text-align:center;margin-bottom:20px;">
+                Update Availability
+            </h3>
+            <form method="post"
+                  th:action="@{'/admin/doctors/' + ${availabilities[0].doctorInfo.id} + '/update_availability'}">
+                <input type="hidden" id="availabilityId" name="id">
+                <label>Day</label>
+                <input type="text"
+                       id="updateWorkingDay"
+                       name="workingDay"
+                       readonly
+                       style="width:100%;margin-bottom:10px">
+                <label>Start Time</label>
+                <input type="time"
+                       id="updateStartTime"
+                       name="startTime"
+                       required
+                       style="width:100%;margin-bottom:10px">
+                <label>End Time</label>
+                <input type="time"
+                       id="updateEndTime"
+                       name="endTime"
+                       required
+                       style="width:100%;margin-bottom:20px">
+                <button type="submit"
+                        style="width:100%;padding:10px">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Add Availability Modal -->
+<div id="addModal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(44,62,80,0.18);align-items:center;justify-content:center;">
+    <div class="modal-content">
+        <span id="closeAddModal" style="position:absolute;top:18px;right:22px;font-size:1.5rem;cursor:pointer;color:#232946;opacity:0.7;">&times;</span>
+        <h3 style="text-align:center;color:#232946;font-weight:700;margin-bottom:18px;">
+            <i class="fa-solid fa-plus" style="color:#00c6ff;"></i> Add Availability
+        </h3>
+        <form method="post" th:action="@{'/admin/doctors/' + ${doctorId} + '/add_availability'}">
+            <div style="margin-bottom:14px;">
+                <label for="addWorkingDay" style="font-weight:600;">Day</label>
+                <select id="addWorkingDay" name="workingDay" class="doctor-filter-input" required>
+                    <option value="">Select Day</option>
+                    <option th:each="day : ${T(com.example.demo.Enum.WorkingDay).values()}" th:value="${day}" th:text="${day}"></option>
+                </select>
+            </div>
+            <div style="margin-bottom:14px;">
+                <label for="addStartTime" style="font-weight:600;">Start Time</label>
+                <input type="time" id="addStartTime" name="startTime" class="doctor-filter-input" required />
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="addEndTime" style="font-weight:600;">End Time</label>
+                <input type="time" id="addEndTime" name="endTime" class="doctor-filter-input" required />
+            </div>
+            <div style="text-align:center;">
+                <button type="submit" class="doctor-filter-btn doctor-filter-search" style="width:100%;font-size:1.1rem;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Availability
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.querySelectorAll(".update-btn").forEach(button => {
+        button.addEventListener("click", function(){
+            const id = this.dataset.id;
+            const day = this.dataset.day;
+            const start = this.dataset.start;
+            const end = this.dataset.end;
+            document.getElementById("availabilityId").value = id;
+            document.getElementById("updateWorkingDay").value = day;
+            document.getElementById("updateStartTime").value = start;
+            document.getElementById("updateEndTime").value = end;
+            document.getElementById("updateModal").style.display = "flex";
+        });
+    });
+    const closeBtn = document.getElementById("closeUpdateModal");
+    if(closeBtn){
+        closeBtn.onclick = function(){
+            document.getElementById("updateModal").style.display="none";
+        }
+    }
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'flex';
+    }
+    document.getElementById('closeAddModal').onclick = function() {
+        document.getElementById('addModal').style.display = 'none';
+    };
+    window.onclick = function(event){
+        const updateModal = document.getElementById("updateModal");
+        const addModal = document.getElementById("addModal");
+        if(updateModal && event.target === updateModal){
+            updateModal.style.display="none";
+        }
+        if(addModal && event.target === addModal){
+            addModal.style.display="none";
+        }
+    }
+</script>
+</body>
+</html>

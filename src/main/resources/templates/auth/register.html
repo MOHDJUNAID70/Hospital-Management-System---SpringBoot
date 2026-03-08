@@ -68,18 +68,96 @@
         #togglePassword:hover .eye-icon {
             color: var(--primary);
         }
+        .field-error {
+            color: #b10000;
+            font-size: 0.9em;
+            margin-bottom: 0.5em;
+            margin-top: -0.5em;
+        }
+        .field-helper {
+            color: #000000;
+            font-size: 0.85em;
+            margin-bottom: 0.2em;
+            margin-top: -0.2em;
+        }
     </style>
+    <script>
+        function validateForm(event) {
+            let valid = true;
+            // Username validation
+            const username = document.getElementById('username').value;
+            const usernameError = document.getElementById('usernameError');
+            if (!username) {
+                usernameError.textContent = "Username can't be Blank";
+                valid = false;
+            } else if (username.length < 3 || username.length > 50) {
+                usernameError.textContent = "username's length should be between 3 to 50";
+                valid = false;
+            } else if (!/^[A-Za-z0-9]+$/.test(username)) {
+                usernameError.textContent = "Username must have Alphabets and Numbers only";
+                valid = false;
+            } else {
+                usernameError.textContent = "";
+            }
+            // Email validation
+            const email = document.getElementById('email').value;
+            const emailError = document.getElementById('emailError');
+            if (!email) {
+                emailError.textContent = "Email is required";
+                valid = false;
+            } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                emailError.textContent = "Invalid Email Format!!!";
+                valid = false;
+            } else {
+                emailError.textContent = "";
+            }
+            // Password validation
+            const password = document.getElementById('password').value;
+            const passwordError = document.getElementById('passwordError');
+            if (!password) {
+                passwordError.textContent = "Password must not be blank!!!";
+                valid = false;
+            } else if (password.length < 8 || password.length > 50) {
+                passwordError.textContent = "Password length is less than 8";
+                valid = false;
+            } else if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,50}$/.test(password)) {
+                passwordError.textContent = "Password must include all given conditions";
+                valid = false;
+            } else {
+                passwordError.textContent = "";
+            }
+            // Role validation
+            const role = document.getElementById('role').value;
+            const roleError = document.getElementById('roleError');
+            if (!role) {
+                roleError.textContent = "Role is Required";
+                valid = false;
+            } else {
+                roleError.textContent = "";
+            }
+            if (!valid) {
+                event.preventDefault();
+            }
+        }
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('registerForm').addEventListener('submit', validateForm);
+        });
+    </script>
 </head>
 <body>
 <div class="register-container">
-    <form class="form" th:action="@{/user/register}" method="post">
+    <form class="form" id="registerForm" th:action="@{/user/register}" method="post">
         <h2 style="text-align:center; color:var(--primary); margin-bottom:1rem;">Register Yourself</h2>
         <div th:if="${param.error}" class="alert error">Registration failed</div>
         <div th:if="${param.success}" class="alert success">Registration successful</div>
         <label for="email">Email</label>
         <input class="input" id="email" name="email" type="email" placeholder="Enter email" required>
+        <div class="field-helper">Email is required. Format: example@domain.com</div>
+        <div id="emailError" class="field-error"></div>
         <label for="username">Username</label>
         <input class="input" id="username" name="username" type="text" placeholder="Enter username" required>
+        <div class="field-helper">3-50 characters. Alphabets and numbers only.</div>
+        <div id="usernameError" class="field-error"></div>
         <label for="password">Password</label>
         <div class="password-wrapper">
             <input class="input" id="password" name="password" type="password" placeholder="Enter password" required>
@@ -87,22 +165,21 @@
                 <span id="eyeIcon" class="eye-icon">&#128065;</span>
             </button>
         </div>
-        <script>
-            const passwordInput = document.getElementById('password');
-            const togglePassword = document.getElementById('togglePassword');
-            const eyeIcon = document.getElementById('eyeIcon');
-            togglePassword.addEventListener('click', function () {
-                const type = passwordInput.type === 'password' ? 'text' : 'password';
-                passwordInput.type = type;
-                eyeIcon.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{FE0E}'; // Simple eye icon
-            });
-        </script>
+        <div class="field-helper">8-50 characters <br>
+            Must include: <br>
+            1 uppercase, <br>
+            1 lowercase, <br>
+            1 digit, <br>
+            1 special character.</div>
+        <div id="passwordError" class="field-error"></div>
         <label for="role">Role</label>
         <select class="input" id="role" name="role" required>
             <option value="">Select role</option>
             <option value="Doctor">Doctor</option>
             <option value="Patient">Patient</option>
         </select>
+        <div class="field-helper">Role is required.</div>
+        <div id="roleError" class="field-error"></div>
         <button class="button" type="submit" style="margin-top:1rem;">Register</button>
     </form>
     <h3 style="text-align:center; color:var(--primary); margin-bottom:0.5rem; margin-top: 0.5rem;">Or</h3>
@@ -110,6 +187,16 @@
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
         Sign up with Google
     </button>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            eyeIcon.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{FE0E}'; // Simple eye icon
+        });
+    </script>
 </div>
 </body>
 </html>
