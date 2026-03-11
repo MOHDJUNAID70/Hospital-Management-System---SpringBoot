@@ -1,6 +1,6 @@
 package com.example.demo.ViewController;
 
-import com.example.demo.Model.DTO.UserRegistrationDTO;
+import com.example.demo.DTO.User.UserRegistrationDTO;
 import com.example.demo.Model.Users;
 import com.example.demo.Service.UserService;
 import jakarta.servlet.http.HttpSession;

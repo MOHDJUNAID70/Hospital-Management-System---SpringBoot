@@ -1,6 +1,6 @@
 package com.example.demo.Mapper;
 
-import com.example.demo.Model.DTO.AppointmentDTO;
+import com.example.demo.DTO.AppointmentDTO;
 import com.example.demo.Model.Appointment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -2,7 +2,7 @@ package com.example.demo.Pagination;
 
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Mapper.AppointMapper;
-import com.example.demo.Model.DTO.AppointmentDTO;
+import com.example.demo.DTO.AppointmentDTO;
 import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Service.AppointmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;

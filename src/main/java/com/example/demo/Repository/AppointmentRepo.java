@@ -2,10 +2,8 @@ package com.example.demo.Repository;
 
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Model.Appointment;
-import com.example.demo.Model.DTO.AppointmentDTO;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Model.Patient;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

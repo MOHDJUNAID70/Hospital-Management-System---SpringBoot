@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Patient Info</title>
+    <title>Appointments</title>
     <link rel="stylesheet" th:href="@{/css/variables.css}">
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -66,7 +66,7 @@
         .sidebar-link i { font-size: 1.2rem; color: #00c6ff; transition: color 0.2s; }
         .sidebar-link.active i, .sidebar-link:hover i { color: #fff; }
         .doctor-main-content { flex: 1; padding: 0; background: none; min-width: 0; }
-        .patient-container {
+        .appointments-container {
             max-width: 1200px;
             margin: 48px auto 0 auto;
             background: rgba(255,255,255,0.98);
@@ -75,7 +75,7 @@
             padding: 40px 32px 32px 32px;
             position: relative;
         }
-        .patient-title {
+        .appointments-title {
             text-align: center;
             font-size: 2.5rem;
             font-weight: 800;
@@ -105,7 +105,7 @@
         .filter-col {
             display: flex;
             flex-direction: column;
-            min-width: 140px;
+            min-width: 150px;
             flex: 1 1 0;
         }
         .filter-label {
@@ -153,48 +153,37 @@
         }
         .filter-clear:hover { background: #e0e6f7; color: #00c6ff; }
         /* Cards */
-        .patient-cards {
+        .appt-cards {
             display: flex;
             flex-wrap: wrap;
             gap: 28px;
             justify-content: center;
         }
-        .patient-card {
+        .appt-card {
             background: #fff;
             border-radius: 18px;
             box-shadow: 0 4px 24px rgba(44,62,80,0.10);
             padding: 28px 24px 20px 24px;
-            min-width: 240px;
-            max-width: 280px;
-            flex: 1 1 240px;
+            min-width: 260px;
+            max-width: 300px;
+            flex: 1 1 260px;
             text-align: center;
             transition: box-shadow 0.2s, transform 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .patient-card:hover {
+        .appt-card:hover {
             box-shadow: 0 8px 32px rgba(0,198,255,0.18);
             transform: translateY(-4px);
         }
-        .patient-card .card-icon { font-size: 2.5rem; color: #00c6ff; margin-bottom: 12px; }
-        .patient-card .card-name {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #232946;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-        .patient-card .card-detail {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 4px;
-        }
-        .patient-card .card-detail span { font-weight: 700; color: #232946; }
-        .patient-card .card-badge {
+        .appt-card .card-icon { font-size: 2.2rem; color: #00c6ff; margin-bottom: 10px; }
+        .appt-card .card-id { font-size: 0.9rem; color: #888; margin-bottom: 6px; }
+        .appt-card .card-patient { font-size: 1.25rem; font-weight: 800; color: #232946; margin-bottom: 4px; }
+        .appt-card .card-detail { font-size: 1rem; color: #555; margin-bottom: 4px; }
+        .appt-card .card-detail span { font-weight: 700; color: #232946; }
+        .appt-card .card-badge {
             display: inline-block;
-            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
-            color: #fff;
             font-size: 0.88rem;
             font-weight: 700;
             padding: 4px 14px;
@@ -202,6 +191,10 @@
             margin: 8px 0 6px 0;
             letter-spacing: 0.5px;
         }
+        .badge-Booked { background: #d1f7c4; color: #2e7d32; }
+        .badge-Cancelled { background: #ffcdd2; color: #c62828; }
+        .badge-Rescheduled { background: #fff3cd; color: #856404; }
+        .badge-default { background: linear-gradient(90deg, #00c6ff 0%, #232946 100%); color: #fff; }
         .no-data {
             text-align: center;
             color: #a94442;
@@ -247,78 +240,86 @@
         </div>
         <a th:href="@{/}" class="sidebar-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
         <a th:href="@{/admin/dashboard}" class="sidebar-link"><i class="fa-solid fa-gauge"></i> <span>Dashboard</span></a>
-        <a th:href="@{/admin/patients/info}" class="sidebar-link active"><i class="fa-solid fa-bed"></i> <span>Patients</span></a>
+        <a th:href="@{/admin/patients/info}" class="sidebar-link"><i class="fa-solid fa-bed"></i> <span>Patients</span></a>
         <a th:href="@{/admin/doctors/info}" class="sidebar-link"><i class="fa-solid fa-user-doctor"></i> <span>Doctors</span></a>
-        <a th:href="@{/admin/appointments/info}" class="sidebar-link"><i class="fa-solid fa-calendar-check"></i> <span>Appointments</span></a>
+        <a th:href="@{/admin/appointments/info}" class="sidebar-link active"><i class="fa-solid fa-calendar-check"></i> <span>Appointments</span></a>
         <a th:href="@{/templates/billing}" class="sidebar-link"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Billing</span></a>
         <a th:href="@{/reports}" class="sidebar-link"><i class="fa-solid fa-chart-line"></i> <span>Reports</span></a>
     </aside>
     <main class="doctor-main-content">
-        <div class="patient-container">
-            <div class="patient-title">
-                <i class="fa-solid fa-user-injured"></i> Patients Information
+        <div class="appointments-container">
+            <div class="appointments-title">
+                <i class="fa-solid fa-calendar-check"></i> All Appointments
             </div>
             <!-- Filter Section -->
             <div class="filter-section">
-                <form method="get" th:action="@{/admin/patients/info}" class="filter-bar">
+                <form method="get" th:action="@{/admin/appointments/info}" class="filter-bar">
                     <div class="filter-col">
-                        <label class="filter-label"><i class="fa-solid fa-user"></i> Name</label>
-                        <input class="filter-input" type="text" name="name" placeholder="Search by name..." th:value="${name}" />
+                        <label class="filter-label"><i class="fa-solid fa-calendar-day"></i> Date</label>
+                        <input class="filter-input" type="date" name="appointmentDate" th:value="${appointmentDate}" />
                     </div>
                     <div class="filter-col">
-                        <label class="filter-label"><i class="fa-solid fa-location-dot"></i> Address</label>
-                        <input class="filter-input" type="text" name="address" placeholder="Search by address..." th:value="${address}" />
+                        <label class="filter-label"><i class="fa-solid fa-circle-info"></i> Status</label>
+                        <select class="filter-input" name="status">
+                            <option value="">All</option>
+                            <option value="Booked" th:selected="${status != null and status.name() == 'Booked'}">Booked</option>
+                            <option value="Cancelled" th:selected="${status != null and status.name() == 'Cancelled'}">Cancelled</option>
+                            <option value="Rescheduled" th:selected="${status != null and status.name() == 'Rescheduled'}">Rescheduled</option>
+                        </select>
                     </div>
                     <div class="filter-col">
-                        <label class="filter-label"><i class="fa-solid fa-arrow-down-1-9"></i> Min Age</label>
-                        <input class="filter-input" type="number" name="StartAge" placeholder="Min" th:value="${StartAge}" min="0" />
+                        <label class="filter-label"><i class="fa-solid fa-clock"></i> Start Time</label>
+                        <input class="filter-input" type="time" name="appointmentStartTime" th:value="${appointmentStartTime}" />
                     </div>
                     <div class="filter-col">
-                        <label class="filter-label"><i class="fa-solid fa-arrow-up-1-9"></i> Max Age</label>
-                        <input class="filter-input" type="number" name="EndAge" placeholder="Max" th:value="${EndAge}" min="0" />
+                        <label class="filter-label"><i class="fa-solid fa-clock"></i> End Time</label>
+                        <input class="filter-input" type="time" name="appointmentEndTime" th:value="${appointmentEndTime}" />
                     </div>
                     <div class="filter-actions">
                         <button type="submit" class="filter-btn filter-search">
                             <i class="fa-solid fa-search"></i> Filter
                         </button>
-                        <a th:href="@{/admin/patients/info}" class="filter-btn filter-clear">
+                        <a th:href="@{/admin/appointments/info}" class="filter-btn filter-clear">
                             <i class="fa-solid fa-undo"></i> Clear
                         </a>
                     </div>
                 </form>
             </div>
             <!-- No Data -->
-            <div th:if="${#lists.isEmpty(patients.content)}" class="no-data">
-                <i class="fa-solid fa-triangle-exclamation"></i> No Patients Found
+            <div th:if="${appointments.content.isEmpty()}" class="no-data">
+                <i class="fa-solid fa-triangle-exclamation"></i> No Appointments Found
             </div>
             <!-- Cards -->
-            <div class="patient-cards">
-                <div class="patient-card" th:each="patient : ${patients.content}">
-                    <i class="fa-solid fa-user-injured card-icon"></i>
-                    <div class="card-name" th:text="${patient.name}"></div>
-                    <div class="card-badge" th:text="${patient.gender}"></div>
-                    <div class="card-detail"><i class="fa-solid fa-id-badge"></i> ID: <span th:text="${patient.id}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-cake-candles"></i> Age: <span th:text="${patient.age}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-location-dot"></i> Address: <span th:text="${patient.address}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-phone"></i> Phone: <span th:text="${patient.phone}"></span></div>
+            <div class="appt-cards">
+                <div class="appt-card" th:each="appt : ${appointments.content}">
+                    <i class="fa-solid fa-calendar-check card-icon"></i>
+                    <div class="card-id">Appointment #<span th:text="${appt.id}"></span></div>
+                    <div class="card-patient">Patient Name: <span th:text="${appt.patientInfo.name}"></span></div>
+                    <div class="card-detail"><i class="fa-solid fa-user-doctor"></i><span th:text="${appt.doctorInfo.name}"></span></div>
+                    <div class="card-detail"><i class="fa-solid fa-stethoscope"></i> <span th:text="${appt.doctorInfo.specialization}"></span></div>
+                    <div class="card-detail"><i class="fa-solid fa-calendar-day"></i> Date: <span th:text="${appt.appointmentDate}"></span></div>
+                    <div class="card-detail"><i class="fa-solid fa-clock"></i> Time: <span th:text="${#temporals.format(appt.appointmentTime,'hh:mm a')}"></span> - <span th:text="${#temporals.format(appt.appointmentEndTime,'hh:mm a')}"></span></div>
+                    <div class="card-badge"
+                         th:classappend="${appt.status.name() == 'Booked'} ? 'badge-Booked' : (${appt.status.name() == 'Cancelled'} ? 'badge-Cancelled' : (${appt.status.name() == 'Rescheduled'} ? 'badge-Rescheduled' : 'badge-default'))"
+                         th:text="${appt.status}"></div>
                 </div>
             </div>
             <!-- Pagination -->
-            <div class="pagination" th:if="${patients.totalPages > 1}">
+            <div class="pagination" th:if="${appointments.totalPages > 1}">
                 <a class="page-btn"
-                   th:classappend="${patients.number == 0} ? 'disabled'"
-                   th:href="@{/admin/patients/info(pageNo=${patients.number},name=${name},address=${address},StartAge=${StartAge},EndAge=${EndAge})}">
+                   th:classappend="${appointments.number == 0} ? 'disabled'"
+                   th:href="@{/admin/appointments/info(pageNo=${appointments.number},appointmentDate=${appointmentDate},status=${status},appointmentStartTime=${appointmentStartTime},appointmentEndTime=${appointmentEndTime})}">
                     <i class="fa-solid fa-chevron-left"></i> Prev
                 </a>
-                <span th:each="i : ${#numbers.sequence(1, patients.totalPages)}">
+                <span th:each="i : ${#numbers.sequence(1, appointments.totalPages)}">
                     <a class="page-btn"
-                       th:classappend="${patients.number + 1 == i} ? 'active'"
-                       th:href="@{/admin/patients/info(pageNo=${i},name=${name},address=${address},StartAge=${StartAge},EndAge=${EndAge})}"
+                       th:classappend="${appointments.number + 1 == i} ? 'active'"
+                       th:href="@{/admin/appointments/info(pageNo=${i},appointmentDate=${appointmentDate},status=${status},appointmentStartTime=${appointmentStartTime},appointmentEndTime=${appointmentEndTime})}"
                        th:text="${i}"></a>
                 </span>
                 <a class="page-btn"
-                   th:classappend="${patients.number + 1 == patients.totalPages} ? 'disabled'"
-                   th:href="@{/admin/patients/info(pageNo=${patients.number + 2},name=${name},address=${address},StartAge=${StartAge},EndAge=${EndAge})}">
+                   th:classappend="${appointments.number + 1 == appointments.totalPages} ? 'disabled'"
+                   th:href="@{/admin/appointments/info(pageNo=${appointments.number + 2},appointmentDate=${appointmentDate},status=${status},appointmentStartTime=${appointmentStartTime},appointmentEndTime=${appointmentEndTime})}">
                     Next <i class="fa-solid fa-chevron-right"></i>
                 </a>
             </div>

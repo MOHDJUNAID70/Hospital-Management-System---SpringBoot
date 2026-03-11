@@ -6,9 +6,9 @@ import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Idempotency.IdempotencyKey;
 import com.example.demo.Idempotency.IdempotencyRepo;
 import com.example.demo.Model.*;
-import com.example.demo.Model.DTO.AppointmentDTO;
+import com.example.demo.DTO.AppointmentDTO;
 import com.example.demo.Mapper.AppointMapper;
-import com.example.demo.Model.DTO.IdempotencyRecordDTO;
+import com.example.demo.DTO.IdempotencyRecordDTO;
 import com.example.demo.Redis.RedisIdempotencyService;
 import com.example.demo.Repository.*;
 import com.example.demo.Specification.AppointmentSpecification;
@@ -256,10 +256,10 @@ public class AppointmentService {
     public Page<AppointmentDTO> fetchAll(Pageable pageable, LocalDate appointmentDate,
                          AppointmentStatus status, LocalTime appointmentStartTime, LocalTime appointmentEndTime) {
         Specification<Appointment> spec= AppointmentSpecification.getSpecification(appointmentDate, status, appointmentStartTime, appointmentEndTime);
-        List<Appointment> appointments=appointmentRepo.findAll(spec);
-        if(appointments.isEmpty()){
-            throw new CustomException("No such appointment exists with this criteria");
-        }
+//        List<Appointment> appointments=appointmentRepo.findAll(spec);
+//        if(appointments.isEmpty()){
+//            throw new CustomException("No such appointment exists with this criteria");
+//        }
         return appointmentRepo.findAll(spec, pageable).map(appointMapper::ToDTO);
     }
 

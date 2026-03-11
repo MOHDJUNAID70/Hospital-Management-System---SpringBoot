@@ -2,7 +2,7 @@ package com.example.demo.Redis;
 
 
 import com.example.demo.ExceptionHandler.CustomException;
-import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.DoctorAvailabilityDTO;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;

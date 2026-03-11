@@ -1,14 +1,9 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Enum.DoctorSpecializations;
-import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.DoctorAvailabilityMapper;
-import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
-import com.example.demo.Model.DTO.DoctorDTO;
-import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
+import com.example.demo.DTO.Doctor.DoctorDTO;
 import com.example.demo.Model.Doctor;
-import com.example.demo.Model.DoctorAvailability;
-import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Repository.DoctorRepo;
 import com.example.demo.Service.DoctorAvailabilityService;
@@ -18,13 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 

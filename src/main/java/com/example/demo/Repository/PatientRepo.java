@@ -31,4 +31,6 @@ public interface PatientRepo extends JpaRepository<Patient, Integer>, JpaSpecifi
     List<Patient> findByAgeIsGreaterThanEqual(Integer age);
 
     Patient findByNameAndUser(@NotBlank @Size(min = 3, max = 50) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must only contain alphabets and space") String name, Users user);
+
+    List<Patient> findByUser(Users user);
 }

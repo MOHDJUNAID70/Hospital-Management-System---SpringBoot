@@ -1,8 +1,8 @@
 package com.example.demo.Controller;
 
-import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
-import com.example.demo.Model.DTO.SetDoctorAvailabilityDTO;
-import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.DoctorAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.SetDoctorAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.UpdateAvailabilityDTO;
 import com.example.demo.Model.DoctorAvailability;
 import com.example.demo.Repository.DoctorAvailabilityRepo;
 import com.example.demo.Service.DoctorAvailabilityService;

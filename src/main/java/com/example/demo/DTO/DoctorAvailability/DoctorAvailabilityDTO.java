@@ -1,5 +1,6 @@
-package com.example.demo.Model.DTO;
+package com.example.demo.DTO.DoctorAvailability;
 
+import com.example.demo.DTO.Doctor.DoctorDTO;
 import com.example.demo.Enum.WorkingDay;
 import lombok.AllArgsConstructor;
 import lombok.Data;

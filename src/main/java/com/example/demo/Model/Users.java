@@ -1,6 +1,7 @@
 package com.example.demo.Model;
 
 import com.example.demo.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -23,6 +24,11 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+//    @JsonManagedReference
+//    use only if you have bidirectional relationship and you want to serialize the parent object
+//    and ignore the child object to avoid infinite recursion. In this case, since we have a unidirectional relationship
+//    from Users to Patient, we don't need to use @JsonManagedReference. Instead, we can simply use @JsonIgnore on the patients
+//    field in the Users class to prevent serialization of the patients when serializing a Users object.
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Patient> patients=new ArrayList<>();
 

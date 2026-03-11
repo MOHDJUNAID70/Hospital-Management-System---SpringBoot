@@ -1,7 +1,7 @@
 package com.example.demo.Pagination;
 
 import com.example.demo.Enum.Role;
-import com.example.demo.Model.DTO.UserInfoDTO;
+import com.example.demo.DTO.User.UserInfoDTO;
 import com.example.demo.Service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

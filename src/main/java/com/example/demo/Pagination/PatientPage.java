@@ -1,8 +1,6 @@
 package com.example.demo.Pagination;
 
-import com.example.demo.Mapper.PatientMapper;
-import com.example.demo.Model.DTO.PatientDTO;
-import com.example.demo.Model.Patient;
+import com.example.demo.DTO.Patient.PatientDTO;
 import com.example.demo.Repository.PatientRepo;
 import com.example.demo.Service.PatientService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,14 +21,12 @@ public class PatientPage {
     @Autowired
     PatientRepo patientRepo;
     @Autowired
-    private PatientMapper patientMapper;
-    @Autowired
     private PatientService patientService;
 
     @GetMapping("patient/details")
     public Page<PatientDTO> getPatients(
-            @RequestParam(required = false, defaultValue = "1") int pageNo,
-            @RequestParam(required = false, defaultValue = "10") int pageSize,
+            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(required = false, defaultValue = "id") String sortBy,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String address,

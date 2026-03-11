@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Patients</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
+        .doctor-layout {
+            display: flex;
+            min-height: 100vh;
+            background: none;
+        }
+        .doctor-sidebar {
+            min-width: 240px;
+            max-width: 260px;
+            background: linear-gradient(180deg, #e3e9f7 0%, #f8fafd 100%);
+            border-radius: 24px 0 0 24px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.10);
+            padding: 36px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 10;
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #232946;
+            margin-bottom: 38px;
+            letter-spacing: 1px;
+        }
+        .sidebar-header i { color: #00c6ff; font-size: 1.7rem; }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #232946;
+            background: transparent;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            width: 100%;
+        }
+        .sidebar-link.active, .sidebar-link:hover {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+        }
+        .sidebar-link i { font-size: 1.2rem; color: #00c6ff; transition: color 0.2s; }
+        .sidebar-link.active i, .sidebar-link:hover i { color: #fff; }
+        .doctor-main-content { flex: 1; padding: 0; background: none; min-width: 0; }
+
+        .patient-container {
+            max-width: 1200px;
+            margin: 48px auto 0 auto;
+            background: rgba(255,255,255,0.98);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.10);
+            padding: 40px 32px 32px 32px;
+            position: relative;
+        }
+        .patient-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #232946;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0,198,255,0.08);
+        }
+        .patient-subtitle {
+            text-align: center;
+            color: #6c7a96;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #232946;
+            font-weight: 700;
+            font-size: 1.08rem;
+            margin-bottom: 18px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .back-link:hover {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .stat-chip {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 12px rgba(0,198,255,0.15);
+        }
+
+        /* Cards Grid */
+        .patient-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+            justify-content: center;
+        }
+        .patient-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(44,62,80,0.10);
+            padding: 28px 24px 20px 24px;
+            text-align: center;
+            transition: box-shadow 0.3s, transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .patient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+        }
+        .patient-card:hover {
+            box-shadow: 0 12px 40px rgba(0,198,255,0.22);
+            transform: translateY(-6px);
+        }
+        .card-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e3e9f7 0%, #00c6ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .card-avatar i {
+            font-size: 2rem;
+            color: #fff;
+        }
+        .card-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #232946;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 20px;
+            margin: 6px 0 12px 0;
+            letter-spacing: 0.5px;
+        }
+        .card-details {
+            width: 100%;
+            text-align: left;
+            padding: 0 8px;
+        }
+        .card-detail {
+            font-size: 0.98rem;
+            color: #555;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-detail i {
+            color: #00c6ff;
+            width: 18px;
+            text-align: center;
+        }
+        .card-detail span {
+            font-weight: 700;
+            color: #232946;
+        }
+
+        /* No Data */
+        .no-data {
+            text-align: center;
+            color: #a94442;
+            font-size: 1.2rem;
+            font-style: italic;
+            margin: 48px 0;
+        }
+        .no-data i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 12px;
+            color: #ddd;
+        }
+
+        @media (max-width: 900px) {
+            .patient-cards {
+                grid-template-columns: 1fr;
+            }
+            .doctor-sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="doctor-layout">
+    <aside class="doctor-sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-hospital"></i>
+            <span>HMS Portal</span>
+        </div>
+        <a th:href="@{/}" class="sidebar-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+        <a th:href="@{/admin/dashboard}" class="sidebar-link"><i class="fa-solid fa-gauge"></i> <span>Dashboard</span></a>
+        <a th:href="@{/admin/patients/info}" class="sidebar-link active"><i class="fa-solid fa-bed"></i> <span>Patients</span></a>
+        <a th:href="@{/admin/doctors/info}" class="sidebar-link"><i class="fa-solid fa-user-doctor"></i> <span>Doctors</span></a>
+        <a th:href="@{/admin/appointments/info}" class="sidebar-link"><i class="fa-solid fa-calendar-check"></i> <span>Appointments</span></a>
+        <a th:href="@{/templates/billing}" class="sidebar-link"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Billing</span></a>
+        <a th:href="@{/reports}" class="sidebar-link"><i class="fa-solid fa-chart-line"></i> <span>Reports</span></a>
+    </aside>
+    <main class="doctor-main-content">
+        <div class="patient-container">
+            <!-- Back Button -->
+            <a th:href="@{/admin/dashboard}" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+
+            <div class="patient-title">
+                <i class="fa-solid fa-user-injured"></i> All Patients
+            </div>
+            <div class="patient-subtitle">Complete list of registered patients</div>
+
+            <!-- Stats -->
+            <div class="stats-bar">
+                <div class="stat-chip">
+                    <i class="fa-solid fa-users"></i>&nbsp; Total Patients: <span th:text="${#lists.size(patients)}">0</span>
+                </div>
+            </div>
+
+            <!-- No Data -->
+            <div th:if="${#lists.isEmpty(patients)}" class="no-data">
+                <i class="fa-solid fa-user-slash"></i>
+                No Patients Found
+            </div>
+
+            <!-- Patient Cards -->
+            <div class="patient-cards" th:unless="${#lists.isEmpty(patients)}">
+                <div class="patient-card" th:each="patient : ${patients}">
+                    <div class="card-avatar">
+                        <i class="fa-solid fa-user-injured"></i>
+                    </div>
+                    <div class="card-name" th:text="${patient.name}">Patient Name</div>
+                    <div class="card-badge" th:text="${patient.gender}">Gender</div>
+                    <div class="card-details">
+                        <div class="card-detail">
+                            <i class="fa-solid fa-id-badge"></i> ID: <span th:text="${patient.id}">0</span>
+                        </div>
+                        <div class="card-detail">
+                            <i class="fa-solid fa-cake-candles"></i> Age: <span th:text="${patient.age}">0</span>
+                        </div>
+                        <div class="card-detail">
+                            <i class="fa-solid fa-location-dot"></i> Address: <span th:text="${patient.address}">Address</span>
+                        </div>
+                        <div class="card-detail">
+                            <i class="fa-solid fa-phone"></i> Phone: <span th:text="${patient.phone}">0000000000</span>
+                        </div>
+                        <hr style="border: none; border-top: 1px solid #e0e6f7; margin: 10px 0;">
+                        <div class="card-detail" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #232946; font-size: 0.95rem;">
+                                <i class="fa-solid fa-user" style="color: #00c6ff;"></i> Added By User
+                            </div>
+                            <div style="padding-left: 26px; font-size: 0.92rem; color: #555;">
+                                <div style="margin-bottom: 3px;">ID: <span th:text="${patient.getUserInfo().getUserId()}" style="font-weight: 700; color: #232946;"></span></div>
+                                <div>Username: <span th:text="${patient.getUserInfo().getUsername()}" style="font-weight: 700; color: #232946;"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

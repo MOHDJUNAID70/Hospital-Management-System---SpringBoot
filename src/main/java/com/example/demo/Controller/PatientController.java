@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.Patient.PatientDTO;
 import com.example.demo.Model.Patient;
 import com.example.demo.Service.PatientService;
 import com.example.demo.Service.UserService;
@@ -8,9 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,13 +24,13 @@ public class PatientController {
     private UserService userService;
     //    get all patient info
 //    @PreAuthorize("hasRole('Admin')")
-    @GetMapping("/admin/patients-info")
-    public List<Patient> getAllPatients() {
+    @GetMapping("/admin/patients/info")
+    public List<PatientDTO> getAllPatients(){
         return patientService.getAllPatients();
     }
 
 //    Create Patient
-    @PreAuthorize("hasRole('Patient')")
+//    @PreAuthorize("hasRole('Patient')")
     @PostMapping("patient/add")
     public ResponseEntity<String> addPatient(@Valid @RequestBody Patient patient) {
         userService.addPatient(patient);
@@ -63,6 +61,11 @@ public class PatientController {
     public ResponseEntity<String> deletePatientById(@RequestParam int id) {
         patientService.deletePatientById(id);
         return new ResponseEntity<>("Patient details has been deleted!!!", HttpStatus.OK);
+    }
+
+    @GetMapping("patient/getAllByUserId")
+    public List<PatientDTO> getPatientsByUserId(@RequestParam Integer userId) {
+        return patientService.getPatientsByUserId(userId);
     }
 }
 

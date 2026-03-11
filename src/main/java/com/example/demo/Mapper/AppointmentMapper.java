@@ -2,8 +2,8 @@
 //
 //
 //import com.example.demo.DTO.AppointmentDTO;
-//import com.example.demo.DTO.DoctorDTO;
-//import com.example.demo.DTO.PatientDTO;
+//import com.example.demo.DTO.Doctor.DoctorDTO;
+//import com.example.demo.DTO.Patient.PatientDTO;
 //import com.example.demo.Model.Appointment;
 //import com.example.demo.Model.Doctor;
 //import com.example.demo.Model.Patient;

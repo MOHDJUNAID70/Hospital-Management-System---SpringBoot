@@ -1,7 +1,6 @@
 package com.example.demo.Pagination;
 
 import com.example.demo.Enum.DoctorSpecializations;
-import com.example.demo.Model.DTO.DoctorDTO;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Service.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;

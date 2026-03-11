@@ -1,6 +1,6 @@
 package com.example.demo.Mapper;
 
-import com.example.demo.Model.DTO.UserInfoDTO;
+import com.example.demo.DTO.User.UserInfoDTO;
 import com.example.demo.Model.Users;
 import org.mapstruct.Mapper;
 

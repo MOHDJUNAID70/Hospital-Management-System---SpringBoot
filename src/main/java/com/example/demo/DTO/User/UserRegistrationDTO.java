@@ -1,4 +1,4 @@
-package com.example.demo.Model.DTO;
+package com.example.demo.DTO.User;
 
 import com.example.demo.Enum.Role;
 import jakarta.persistence.*;

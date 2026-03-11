@@ -1,5 +1,7 @@
-package com.example.demo.Model.DTO;
+package com.example.demo.DTO;
 
+import com.example.demo.DTO.Doctor.DoctorDTO;
+import com.example.demo.DTO.Patient.PatientDTO;
 import com.example.demo.Enum.AppointmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;

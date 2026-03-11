@@ -5,9 +5,9 @@ import com.example.demo.Enum.WorkingDay;
 import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Mapper.DoctorAvailabilityMapper;
 import com.example.demo.Model.Appointment;
-import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
-import com.example.demo.Model.DTO.SetDoctorAvailabilityDTO;
-import com.example.demo.Model.DTO.UpdateAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.DoctorAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.SetDoctorAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.UpdateAvailabilityDTO;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Model.DoctorAvailability;
 import com.example.demo.Redis.RedisCacheService;
@@ -23,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -107,5 +106,11 @@ public class DoctorAvailabilityService {
         List<DoctorAvailabilityDTO> availabilityDTO=availability.stream().map(doctorAvailabilityMapper::ToDTO).toList();
 //        redisCacheService.setDoctorAvailabilityByTheirId(cacheKey, availabilityDTO);
         return availabilityDTO;
+    }
+
+    public void deleteAvailability(int id) {
+        DoctorAvailability availability=doctorAvailabilityRepo.findById(id)
+                .orElseThrow(()-> new RuntimeException("doctor availability not found"));
+        doctorAvailabilityRepo.delete(availability);
     }
 }

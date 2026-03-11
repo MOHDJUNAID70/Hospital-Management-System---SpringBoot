@@ -1,7 +1,7 @@
 package com.example.demo.Pagination;
 
 import com.example.demo.Enum.WorkingDay;
-import com.example.demo.Model.DTO.DoctorAvailabilityDTO;
+import com.example.demo.DTO.DoctorAvailability.DoctorAvailabilityDTO;
 import com.example.demo.Service.DoctorAvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,8 +23,8 @@ public class DoctorAvailabilityPage {
 
     @GetMapping("/doctor_availability/details")
     public Page<DoctorAvailabilityDTO> getDoctorAvailability(
-            @RequestParam(required = false, defaultValue = "1") int pageNo,
-            @RequestParam(required = false, defaultValue = "4") int pageSize,
+            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false, defaultValue = "4") Integer pageSize,
             @RequestParam(required = false, defaultValue = "id") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String sortDirection,
             @RequestParam(required = false) WorkingDay workingDay,

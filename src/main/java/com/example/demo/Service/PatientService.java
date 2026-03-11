@@ -1,11 +1,13 @@
 package com.example.demo.Service;
 
 import com.example.demo.ExceptionHandler.CustomException;
+import com.example.demo.DTO.Patient.PatientDTO;
 import com.example.demo.Mapper.PatientMapper;
-import com.example.demo.Model.DTO.PatientDTO;
 import com.example.demo.Model.Patient;
+import com.example.demo.Model.Users;
 import com.example.demo.Redis.RedisCacheService;
 import com.example.demo.Repository.PatientRepo;
+import com.example.demo.Repository.UserRepo;
 import com.example.demo.Specification.PatientSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,18 @@ public class PatientService {
     @Autowired
     PatientRepo patientRepo;
     @Autowired
+    UserRepo usersRepository;
+    @Autowired
     private PatientMapper patientMapper;
     @Autowired
     private RedisCacheService redisCacheService;
 
-    public List<Patient> getAllPatients() {
-        return patientRepo.findAll();
+    public List<PatientDTO> getAllPatients() {
+        List<Patient> patients=patientRepo.findAll();
+        if(patients.isEmpty()){
+            throw new CustomException("No such patient exists");
+        }
+        return patients.stream().map(patientMapper::ToDTO).toList();
     }
 
     @Transactional
@@ -74,5 +82,14 @@ public class PatientService {
 //            throw new CustomException("No such patient exists with given criteria");
 //        }
         return patientRepo.findAll(spec, pageable).map(patientMapper::ToDTO);
+    }
+
+    public List<PatientDTO> getPatientsByUserId(Integer userId) {
+        Users user=usersRepository.findById(userId).orElseThrow(()->new CustomException("User not found!!!"));
+        List<Patient> patients=patientRepo.findByUser(user);
+        if(patients.isEmpty()){
+            throw new CustomException("No such patient exists for user id " + userId);
+        }
+        return patients.stream().map(patientMapper::ToDTO).toList();
     }
 }

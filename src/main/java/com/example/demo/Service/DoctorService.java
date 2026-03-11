@@ -2,7 +2,7 @@ package com.example.demo.Service;
 
 import com.example.demo.Enum.DoctorSpecializations;
 import com.example.demo.ExceptionHandler.CustomException;
-import com.example.demo.Model.DTO.DoctorDTO;
+import com.example.demo.DTO.Doctor.DoctorDTO;
 import com.example.demo.Mapper.DoctorMapper;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Redis.RedisCacheService;

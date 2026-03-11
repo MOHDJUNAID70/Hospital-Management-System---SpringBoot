@@ -1,4 +1,4 @@
-package com.example.demo.Model.DTO;
+package com.example.demo.DTO.DoctorAvailability;
 
 
 import com.example.demo.Enum.WorkingDay;

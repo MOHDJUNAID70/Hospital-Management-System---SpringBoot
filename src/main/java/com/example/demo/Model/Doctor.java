@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.List;
+
 @Data
 @Entity
 public class Doctor {
@@ -30,4 +32,8 @@ public class Doctor {
     @NotNull
     @Enumerated(EnumType.STRING)
     private DoctorSpecializations specialization;
+    @OneToMany(mappedBy = "doctor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<DoctorAvailability> availabilities;
 }
